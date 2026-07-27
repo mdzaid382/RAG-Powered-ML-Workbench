@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Dataset Analyzer</h1>
+
+<div class="upload-box">
+
+    <input
+            type="file"
+            id="csvFile"
+            accept=".csv">
+
+    <button id="uploadBtn">
+
+        Analyze Dataset
+
+    </button>
+
+</div>
+
+<div class="summary-grid">
+
+    <div class="card">
+
+        <h3>Rows</h3>
+
+        <p id="rows">-</p>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Columns</h3>
+
+        <p id="columns">-</p>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Memory</h3>
+
+        <p id="memory">-</p>
+
+    </div>
+
+</div>
+
+<div class="section">
+
+    <h2>Column Types</h2>
+
+    <table id="columnTypesTable"></table>
+
+</div>
+
+<div class="section">
+
+    <h2>Missing Values</h2>
+
+    <table id="missingTable"></table>
+
+</div>
+
+<div class="section">
+
+    <h2>High Correlations</h2>
+
+    <table id="correlationTable"></table>
+
+</div>
+
+<div class="section">
+
+    <h2>Outliers</h2>
+
+    <table id="outlierTable"></table>
+
+</div>
+
+<div class="section">
+
+    <h2>Recommendations</h2>
+
+    <ul id="recommendationList"></ul>
+
+</div>
+
+<script src="{{ url_for('static', path='js/dataset.js') }}"></script>
+
+{% endblock %}

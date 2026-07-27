@@ -264,7 +264,7 @@ class DatasetAnalyzer:
                 ensure_ascii=False,
             )
 
-        return report_path
+        return report
 
 
 if __name__ == "__main__":
