@@ -3,6 +3,8 @@ import json
 import numpy as np
 import pandas as pd
 
+from Logger import logging
+
 
 class DatasetAnalyzer:
     """
@@ -15,35 +17,51 @@ class DatasetAnalyzer:
         dataset_name: str = "Dataset",
         report_dir: str = "reports",
     ):
-        self.df = dataframe
-        self.dataset_name = dataset_name
+        try:
+            logging.info(
+                f"Initializing DatasetAnalyzer for '{dataset_name}'."
+            )
 
-        self.report_dir = Path(report_dir)
-        self.report_dir.mkdir(parents=True, exist_ok=True)
+            self.df = dataframe
+            self.dataset_name = dataset_name
 
-        # Cache dataframe metadata
-        self.rows = len(self.df)
-        self.columns = len(self.df.columns)
-        self.memory_usage = round(
-            self.df.memory_usage(deep=True).sum() / (1024 ** 2), 2
-        )
+            self.report_dir = Path(report_dir)
+            self.report_dir.mkdir(parents=True, exist_ok=True)
 
-        # Cache column groups
-        self.numeric_columns = self.df.select_dtypes(
-            include=np.number
-        ).columns
+            # Cache dataframe metadata
+            self.rows = len(self.df)
+            self.columns = len(self.df.columns)
+            self.memory_usage = round(
+                self.df.memory_usage(deep=True).sum() / (1024 ** 2), 2
+            )
 
-        self.categorical_columns = self.df.select_dtypes(
-            include=["object", "category", "string"]
-        ).columns
+            # Cache column groups
+            self.numeric_columns = self.df.select_dtypes(
+                include=np.number
+            ).columns
 
-        self.datetime_columns = self.df.select_dtypes(
-            include=["datetime", "datetimetz"]
-        ).columns
+            self.categorical_columns = self.df.select_dtypes(
+                include=["object", "category", "string"]
+            ).columns
 
-        self.boolean_columns = self.df.select_dtypes(
-            include="bool"
-        ).columns
+            self.datetime_columns = self.df.select_dtypes(
+                include=["datetime", "datetimetz"]
+            ).columns
+
+            self.boolean_columns = self.df.select_dtypes(
+                include="bool"
+            ).columns
+
+            logging.info(
+                f"Dataset loaded successfully "
+                f"({self.rows} rows, {self.columns} columns)."
+            )
+
+        except Exception:
+            logging.exception(
+                "Failed to initialize DatasetAnalyzer."
+            )
+            raise
 
     # ---------------------------------------------------
     # Basic Information
@@ -239,45 +257,57 @@ class DatasetAnalyzer:
 
     def generate_report(self):
 
-        report = {
-            "dataset_name": self.dataset_name,
-            "rows": self.get_rows(),
-            "columns": self.get_columns(),
-            "memory_usage_mb": self.get_memory_usage(),
-            "column_types": self.get_column_types(),
-            "missing_values": self.get_missing_values(),
-            "duplicates": self.get_duplicates(),
-            "high_correlations": self.get_high_correlations(),
-            "outliers": self.get_outliers(),
-            "constant_columns": self.get_constant_columns(),
-            "high_cardinality_columns": self.get_high_cardinality_columns(),
-            "recommendations": self.get_recommendations(),
-        }
+        logging.info(
+            f"Generating profiling report for "
+            f"'{self.dataset_name}'."
+        )
 
-        report_path = self.report_dir / f"{self.dataset_name}.json"
+        try:
 
-        with open(report_path, "w", encoding="utf-8") as file:
-            json.dump(
-                report,
-                file,
-                indent=4,
-                ensure_ascii=False,
+            report = {
+                "dataset_name": self.dataset_name,
+                "rows": self.get_rows(),
+                "columns": self.get_columns(),
+                "memory_usage_mb": self.get_memory_usage(),
+                "column_types": self.get_column_types(),
+                "missing_values": self.get_missing_values(),
+                "duplicates": self.get_duplicates(),
+                "high_correlations": self.get_high_correlations(),
+                "outliers": self.get_outliers(),
+                "constant_columns": self.get_constant_columns(),
+                "high_cardinality_columns": self.get_high_cardinality_columns(),
+                "recommendations": self.get_recommendations(),
+            }
+
+            report_path = (
+                self.report_dir /
+                f"{self.dataset_name}.json"
             )
 
-        return report
+            with open(
+                report_path,
+                "w",
+                encoding="utf-8",
+            ) as file:
+
+                json.dump(
+                    report,
+                    file,
+                    indent=4,
+                    ensure_ascii=False,
+                )
+
+            logging.info(
+                f"Profiling report saved successfully "
+                f"to '{report_path}'."
+            )
+
+            return report
+
+        except Exception:
+            logging.exception(
+                "Failed to generate profiling report."
+            )
+            raise
 
 
-if __name__ == "__main__":
-
-    file_path = Path("Dataset/Titanic-Dataset.csv")
-
-    df = pd.read_csv(file_path)
-
-    analyzer = DatasetAnalyzer(
-        dataframe=df,
-        dataset_name=file_path.stem,
-    )
-
-    report_path = analyzer.generate_report()
-
-    print(f"Report saved to: {report_path}")
