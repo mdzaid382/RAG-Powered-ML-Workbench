@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 from langchain_community.vectorstores import FAISS
 
@@ -39,9 +40,8 @@ class VectorStoreManager:
             )
             raise
 
-    # ------------------------------------
+  
     # Create Empty VectorStore
-    # ------------------------------------
 
     def create(self):
 
@@ -67,9 +67,8 @@ class VectorStoreManager:
             )
             raise
 
-    # ------------------------------------
+
     # Load Existing VectorStore
-    # ------------------------------------
 
     def load(self):
 
@@ -112,9 +111,8 @@ class VectorStoreManager:
             )
             raise
 
-    # ------------------------------------
+
     # Save VectorStore
-    # ------------------------------------
 
     def save(self, vectorstore):
 
@@ -136,3 +134,43 @@ class VectorStoreManager:
                 "Failed to save FAISS vector store."
             )
             raise
+
+    #reset vectorstore
+
+    def reset(self):
+   
+           try:
+               logging.info(
+                   "Resetting FAISS vector store."
+               )
+   
+               if self.vectorstore_path.exists():
+   
+                   shutil.rmtree(
+                       self.vectorstore_path
+                   )
+   
+                   logging.info(
+                       "Existing vector store deleted."
+                   )
+   
+               self.vectorstore_path.mkdir(
+                   parents=True,
+                   exist_ok=True
+               )
+   
+               vectorstore = self.create()
+   
+               self.save(vectorstore)
+   
+               logging.info(
+                   "New empty FAISS vector store created successfully."
+               )
+   
+               return vectorstore
+   
+           except Exception:
+               logging.exception(
+                   "Failed to reset FAISS vector store."
+               )
+               raise
