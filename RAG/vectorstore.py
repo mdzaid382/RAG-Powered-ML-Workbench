@@ -1,0 +1,138 @@
+from pathlib import Path
+
+from langchain_community.vectorstores import FAISS
+
+from RAG.embeddings import EmbeddingModel
+from Logger import logging
+
+
+class VectorStoreManager:
+    """
+    Manages the FAISS vector database.
+    """
+
+    def __init__(self, vectorstore_path: str = "vectorstore"):
+
+        try:
+            logging.info(
+                f"Initializing VectorStoreManager at '{vectorstore_path}'."
+            )
+
+            self.vectorstore_path = Path(vectorstore_path)
+
+            self.vectorstore_path.mkdir(
+                parents=True,
+                exist_ok=True
+            )
+
+            self.embedding_model = (
+                EmbeddingModel().get_embeddings()
+            )
+
+            logging.info(
+                "VectorStoreManager initialized successfully."
+            )
+
+        except Exception:
+            logging.exception(
+                "Failed to initialize VectorStoreManager."
+            )
+            raise
+
+    # ------------------------------------
+    # Create Empty VectorStore
+    # ------------------------------------
+
+    def create(self):
+
+        try:
+            logging.info(
+                "Creating new FAISS vector store."
+            )
+
+            vectorstore = FAISS.from_texts(
+                texts=["AI ML Workbench"],
+                embedding=self.embedding_model
+            )
+
+            logging.info(
+                "FAISS vector store created successfully."
+            )
+
+            return vectorstore
+
+        except Exception:
+            logging.exception(
+                "Failed to create FAISS vector store."
+            )
+            raise
+
+    # ------------------------------------
+    # Load Existing VectorStore
+    # ------------------------------------
+
+    def load(self):
+
+        try:
+            index_file = (
+                self.vectorstore_path / "index.faiss"
+            )
+
+            if not index_file.exists():
+
+                logging.info(
+                    "Vector store not found. Creating a new one."
+                )
+
+                vectorstore = self.create()
+
+                self.save(vectorstore)
+
+                return vectorstore
+
+            logging.info(
+                "Loading existing FAISS vector store."
+            )
+
+            vectorstore = FAISS.load_local(
+                folder_path=str(self.vectorstore_path),
+                embeddings=self.embedding_model,
+                allow_dangerous_deserialization=True
+            )
+
+            logging.info(
+                "FAISS vector store loaded successfully."
+            )
+
+            return vectorstore
+
+        except Exception:
+            logging.exception(
+                "Failed to load FAISS vector store."
+            )
+            raise
+
+    # ------------------------------------
+    # Save VectorStore
+    # ------------------------------------
+
+    def save(self, vectorstore):
+
+        try:
+            logging.info(
+                "Saving FAISS vector store."
+            )
+
+            vectorstore.save_local(
+                folder_path=str(self.vectorstore_path)
+            )
+
+            logging.info(
+                "FAISS vector store saved successfully."
+            )
+
+        except Exception:
+            logging.exception(
+                "Failed to save FAISS vector store."
+            )
+            raise
