@@ -142,26 +142,29 @@ class ChatMemory:
             raise
 
 
-    # Clear Session
+    # Clear Chat Memory
 
     def clear(
         self,
-        session_id: str
     ):
+
+        """
+        Clears chat memory.
+        """
 
         try:
 
-            self.sessions.pop(
-                session_id,
-                None
+            total_sessions = len(
+                self.sessions
             )
-
+            self.sessions.clear()
             logging.info(
-                f"Cleared chat memory for session: {session_id}"
+                f"Cleared all chat sessions. Removed {total_sessions} session(s)."
             )
 
         except Exception:
+
             logging.exception(
-                f"Failed to clear session: {session_id}"
+                "Failed to clear chat memory."
             )
             raise
