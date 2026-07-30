@@ -144,7 +144,7 @@ class ChatMemory:
 
     # Clear Chat Memory
 
-    def clear(
+    def clear_all(
         self,
     ):
 

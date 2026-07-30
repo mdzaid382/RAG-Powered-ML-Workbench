@@ -1,7 +1,9 @@
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 from Logger import logging
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class EmbeddingModel:
     """

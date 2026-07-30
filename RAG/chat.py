@@ -8,8 +8,9 @@ from RAG.memory import ChatMemory
 from RAG.prompts import PromptBuilder
 from RAG.retriever import RAGRetriever
 from RAG.vectorstore import VectorStoreManager
+from dotenv import load_dotenv
 
-
+load_dotenv()
 class ChatService:
     """
     Handles the complete RAG conversation pipeline.
@@ -44,12 +45,10 @@ class ChatService:
 
             self.memory = ChatMemory()
 
-            self.retriever = RAGRetriever()
-
             self.prompt = PromptBuilder.get_prompt()
 
             self.llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-flash",
+                model="gemini-3.1-flash-lite",
                 temperature=0
             )
 
@@ -81,12 +80,6 @@ class ChatService:
                 "Starting a new project."
             )
     
-            # Remove previous project's vectors
-            VectorStoreManager().reset()
-    
-            # Remove every previous chat session
-            self.memory.clear_all()
-    
             session_id = str(uuid4())
     
             logging.info(
@@ -116,11 +109,18 @@ class ChatService:
                 f"Question received from session {session_id}"
             )
 
-            documents = self.retriever.retrieve(
+            documents = RAGRetriever().retrieve(
                 question=question,
                 k=4
             )
-            
+
+            print("=" * 80)
+
+            for doc in documents:
+                print(doc.metadata)
+                print(doc.page_content[:500])
+
+                print("=" * 80)
             context = "\n\n".join(
             
                 f"""

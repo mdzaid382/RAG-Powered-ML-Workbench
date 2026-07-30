@@ -21,7 +21,6 @@ class RAGIngestor:
             )
 
             self.vector_manager = VectorStoreManager()
-            self.vectorstore = self.vector_manager.load()
 
             logging.info(
                 "RAGIngestor initialized successfully."
@@ -123,13 +122,14 @@ class RAGIngestor:
                 report,
                 report_type
             )
+            vectorstore = self.vector_manager.load()
 
-            self.vectorstore.add_documents(
+            vectorstore.add_documents(
                 [document]
             )
 
             self.vector_manager.save(
-                self.vectorstore
+                vectorstore
             )
 
             logging.info(
@@ -168,7 +168,9 @@ class RAGIngestor:
                 f"Generated {len(chunks)} chunks."
             )
 
-            self.vectorstore.add_documents(
+            vectorstore = self.vector_manager.load()
+ 
+            vectorstore.add_documents(
                 chunks
             )
 

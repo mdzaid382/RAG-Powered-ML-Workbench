@@ -2,6 +2,8 @@ from pathlib import Path
 import shutil
 
 from langchain_community.vectorstores import FAISS
+from langchain_community.docstore.in_memory import InMemoryDocstore
+import faiss
 
 from RAG.embeddings import EmbeddingModel
 from Logger import logging
@@ -44,29 +46,39 @@ class VectorStoreManager:
     # Create Empty VectorStore
 
     def create(self):
-
+    
         try:
+    
             logging.info(
-                "Creating new FAISS vector store."
+                "Creating new empty FAISS vector store."
             )
-
-            vectorstore = FAISS.from_texts(
-                texts=["AI ML Workbench"],
-                embedding=self.embedding_model
+    
+            dimension = len(
+                self.embedding_model.embed_query("test")
             )
-
+    
+            index = faiss.IndexFlatL2(dimension)
+    
+            vectorstore = FAISS(
+                embedding_function=self.embedding_model,
+                index=index,
+                docstore=InMemoryDocstore(),
+                index_to_docstore_id={}
+            )
+    
             logging.info(
-                "FAISS vector store created successfully."
+                "Empty FAISS vector store created successfully."
             )
-
+    
             return vectorstore
-
+    
         except Exception:
+    
             logging.exception(
                 "Failed to create FAISS vector store."
             )
+    
             raise
-
 
     # Load Existing VectorStore
 
