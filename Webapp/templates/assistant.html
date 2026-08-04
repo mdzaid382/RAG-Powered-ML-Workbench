@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}AI Assistant · RAG-Powered ML Workbench{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/assistant.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="assistant-container">
+
+    <!-- ===========================
+         Header
+    ============================ -->
+
+    <div class="assistant-header">
+
+        <div>
+            <h1>🤖 AI Machine Learning Assistant</h1>
+            <p>
+                Ask questions about your dataset, profiling report, data cleaning,
+                model training, evaluation metrics, or uploaded research papers.
+            </p>
+        </div>
+
+        <div class="assistant-status">
+            <span class="status-dot"></span>
+            <span>Ready</span>
+        </div>
+
+    </div>
+
+    <!-- ===========================
+         Chat Box
+    ============================ -->
+
+    <div id="chatMessages" class="chat-container">
+
+        <div id="welcomeScreen" class="welcome-screen">
+
+            <div class="welcome-icon">AI</div>
+
+            <h2>What do you want to know?</h2>
+            <p>Ask anything about your dataset or pick a starting point below.</p>
+
+            <div class="capabilities">
+
+                <div class="capability-card" data-prompt="Which columns contain missing values?">
+                    <span class="cap-icon">📊</span>
+                    <span>Dataset Profiling</span>
+                </div>
+
+                <div class="capability-card" data-prompt="How should I clean the missing and inconsistent values in this dataset?">
+                    <span class="cap-icon">🧹</span>
+                    <span>Data Cleaning</span>
+                </div>
+
+                <div class="capability-card" data-prompt="Which model would work best for this dataset and why?">
+                    <span class="cap-icon">⚙️</span>
+                    <span>Model Training</span>
+                </div>
+
+                <div class="capability-card" data-prompt="Explain the evaluation metrics for my trained model.">
+                    <span class="cap-icon">📈</span>
+                    <span>Evaluation Metrics</span>
+                </div>
+
+            </div>
+
+            <p class="hint">Or just type your own question below.</p>
+
+        </div>
+
+        <div id="chatMessagesList" class="chat-messages hidden"></div>
+
+    </div>
+
+    <!-- ===========================
+         Input
+    ============================ -->
+
+    <div class="chat-input-area">
+
+        <textarea
+            id="questionInput"
+            rows="1"
+            placeholder="Ask anything about your machine learning project..."
+        ></textarea>
+
+        <button id="sendButton">Send</button>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='js/assistant.js') }}"></script>
+{% endblock %}

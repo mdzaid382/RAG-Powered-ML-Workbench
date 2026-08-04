@@ -4,11 +4,14 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>RAG-Powered ML Workbench</title>
+    <title>{% block title %}RAG-Powered ML Workbench{% endblock %}</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', path='css/style.css') }}">
+
+    {% block extra_css %}{% endblock %}
 
 </head>
 
@@ -23,11 +26,17 @@
         <ul>
 
             <li>
-                <a href="/">📂 Dataset Analyzer</a>
+                <a href="/"
+                   class="{{ 'active' if request.url.path == '/' else '' }}">
+                    📂 Dataset Analyzer
+                </a>
             </li>
 
             <li>
-                <a href="#">🤖 AI Assistant</a>
+                <a href="/assistant"
+                   class="{{ 'active' if request.url.path == '/assistant' else '' }}">
+                    🤖 AI Assistant
+                </a>
             </li>
 
             <li>
@@ -59,6 +68,8 @@
     </main>
 
 </div>
+
+{% block extra_js %}{% endblock %}
 
 </body>
 

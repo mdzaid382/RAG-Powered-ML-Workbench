@@ -1,0 +1,42 @@
+{
+    "dataset_name": "IPL Matches 2008-2020",
+    "rows": 816,
+    "columns": 17,
+    "memory_usage_mb": 0.66,
+    "column_types": {
+        "numeric": 3,
+        "categorical": 14,
+        "datetime": 0,
+        "boolean": 0
+    },
+    "missing_values": {
+        "city": 13,
+        "player_of_match": 4,
+        "winner": 4,
+        "result": 4,
+        "result_margin": 17,
+        "eliminator": 4,
+        "method": 797
+    },
+    "duplicates": 0,
+    "high_correlations": [],
+    "outliers": [
+        {
+            "column": "neutral_venue",
+            "count": 77
+        },
+        {
+            "column": "result_margin",
+            "count": 94
+        }
+    ],
+    "constant_columns": [],
+    "high_cardinality_columns": [
+        "date"
+    ],
+    "recommendations": [
+        "Handle missing values before model training.",
+        "Investigate numeric outliers.",
+        "Encode high-cardinality categorical columns."
+    ]
+}

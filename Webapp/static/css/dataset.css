@@ -1,0 +1,557 @@
+/* ==========================================================
+   DATASET ANALYZER
+   Same token system as assistant.css:
+   ink #0f172a · muted #64748b · line #e2e8f0
+   accent #2563eb · accent-2 #06b6d4 · ok #22c55e · warn #f59e0b
+========================================================== */
+
+.dataset-container{
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 70px);
+}
+
+/* ==========================================================
+   Header
+========================================================== */
+
+.dataset-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 30px;
+    background:white;
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    margin-bottom:20px;
+    border:1px solid #eef1f6;
+    flex-wrap:wrap;
+    gap:14px;
+}
+
+.dataset-header h1{
+    margin:0;
+    font-size:24px;
+    letter-spacing:-0.01em;
+    color:#0f172a;
+}
+
+.dataset-header p{
+    margin-top:6px;
+    color:#64748b;
+    font-size:14px;
+    max-width:520px;
+    line-height:1.5;
+}
+
+.dataset-file-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+    font-size:13px;
+    color:#1e293b;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:8px 14px;
+    border-radius:999px;
+}
+
+.dataset-file-pill .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    flex-shrink:0;
+}
+
+.dataset-file-pill.empty .dot{
+    background:#cbd5e1;
+}
+
+/* ==========================================================
+   Body / scroll area
+========================================================== */
+
+.dataset-body{
+    flex:1;
+    overflow-y:auto;
+    padding-right:4px;
+}
+
+.dataset-body::-webkit-scrollbar{
+    width:8px;
+}
+.dataset-body::-webkit-scrollbar-thumb{
+    background:#dbe3ee;
+    border-radius:8px;
+}
+
+/* ==========================================================
+   Upload zone
+========================================================== */
+
+.upload-zone{
+    background:white;
+    border:2px dashed #cbd5e1;
+    border-radius:16px;
+    padding:60px 30px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+}
+
+.upload-zone:hover{
+    border-color:#2563eb;
+    background:#f8fafc;
+}
+
+.upload-zone.dragover{
+    border-color:#2563eb;
+    background:#eff6ff;
+    transform:scale(1.005);
+}
+
+.upload-zone.uploading{
+    cursor:default;
+    border-style:solid;
+    border-color:#2563eb;
+}
+
+.upload-icon{
+    width:64px;
+    height:64px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    margin-bottom:20px;
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:white;
+    box-shadow:0 10px 24px rgba(37,99,235,.28);
+}
+
+.upload-zone h2{
+    margin:0 0 6px;
+    color:#0f172a;
+    font-size:19px;
+}
+
+.upload-zone p{
+    color:#64748b;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+.upload-browse-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 22px;
+    cursor:pointer;
+    transition:background .15s ease;
+}
+
+.upload-browse-btn:hover{
+    background:#1d4ed8;
+}
+
+.upload-hint{
+    margin-top:16px;
+    color:#94a3b8;
+    font-size:12.5px;
+}
+
+.upload-error{
+    margin-top:16px;
+    color:#b91c1c;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    padding:10px 16px;
+    border-radius:8px;
+    font-size:13.5px;
+}
+
+/* Spinner shown while uploading/profiling */
+
+.spinner{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:3px solid #dbeafe;
+    border-top-color:#2563eb;
+    animation:spin .8s linear infinite;
+    margin-bottom:18px;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+/* ==========================================================
+   Report section
+========================================================== */
+
+.report-section{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.report-toolbar{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+}
+
+.reset-btn{
+    background:white;
+    color:#2563eb;
+    border:1px solid #dbeafe;
+    border-radius:10px;
+    font-weight:600;
+    font-size:13.5px;
+    padding:9px 16px;
+    cursor:pointer;
+    transition:background .15s ease;
+}
+
+.reset-btn:hover{
+    background:#eff6ff;
+}
+
+/* Summary stat cards */
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+}
+
+.stat-card{
+    background:white;
+    border:1px solid #eef1f6;
+    border-radius:12px;
+    padding:18px 20px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);
+}
+
+.stat-card .stat-label{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:#94a3b8;
+    margin-bottom:8px;
+}
+
+.stat-card .stat-value{
+    font-size:26px;
+    font-weight:700;
+    color:#0f172a;
+    letter-spacing:-0.01em;
+}
+
+.stat-card.warn .stat-value{
+    color:#b45309;
+}
+
+/* Panels (columns table, preview table) */
+
+.panel{
+    background:white;
+    border:1px solid #eef1f6;
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:16px 22px;
+    border-bottom:1px solid #eef1f6;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.panel-header h3{
+    margin:0;
+    font-size:15px;
+    color:#0f172a;
+}
+
+.panel-header span{
+    font-size:12.5px;
+    color:#94a3b8;
+}
+
+.panel-scroll{
+    overflow-x:auto;
+    max-height:420px;
+    overflow-y:auto;
+}
+
+.panel-body{
+    padding:20px 22px;
+}
+
+.empty-state{
+    padding:26px 22px;
+    color:#64748b;
+    font-size:13.5px;
+}
+
+/* Column type segmented bar */
+
+.type-bar{
+    display:flex;
+    width:100%;
+    height:10px;
+    border-radius:6px;
+    overflow:hidden;
+    background:#eef2f7;
+    margin-bottom:16px;
+}
+
+.type-bar-segment{
+    height:100%;
+    transition:width .2s ease;
+}
+
+.type-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+}
+
+.type-legend-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:13px;
+    color:#475569;
+}
+
+.type-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    flex-shrink:0;
+}
+
+.type-count{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-weight:600;
+    color:#0f172a;
+}
+
+/* Data quality checks */
+
+.quality-checks{
+    display:flex;
+    flex-direction:column;
+}
+
+.quality-row{
+    display:flex;
+    align-items:flex-start;
+    gap:18px;
+    padding:16px 22px;
+    border-top:1px solid #f1f5f9;
+    flex-wrap:wrap;
+}
+
+.quality-row:first-child{
+    border-top:none;
+}
+
+.quality-label{
+    flex-shrink:0;
+    width:200px;
+    font-weight:600;
+    font-size:13.5px;
+    color:#0f172a;
+}
+
+.quality-hint{
+    font-weight:400;
+    color:#94a3b8;
+    font-size:12px;
+}
+
+.quality-value{
+    flex:1;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+}
+
+.check-clear{
+    color:#166534;
+    font-size:13px;
+    font-weight:600;
+}
+
+.badge{
+    font-size:12px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+}
+
+.badge-warn{
+    background:#fffbeb;
+    color:#b45309;
+    border:1px solid #fde68a;
+}
+
+/* Recommendations */
+
+.recommendations-panel{
+    border-color:#dbeafe;
+}
+
+.recommendations-list{
+    list-style:none;
+    margin:0;
+    padding:6px 0;
+}
+
+.recommendation-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:12px 22px;
+    font-size:14px;
+    color:#1e293b;
+}
+
+.recommendation-item .rec-icon{
+    flex-shrink:0;
+    width:22px;
+    height:22px;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.recommendation-item.clear .rec-icon{
+    background:#f0fdf4;
+    color:#16a34a;
+}
+
+table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+}
+
+table.data-table thead th{
+    position:sticky;
+    top:0;
+    background:#f8fafc;
+    text-align:left;
+    padding:11px 22px;
+    font-weight:600;
+    color:#475569;
+    border-bottom:1px solid #eef1f6;
+    white-space:nowrap;
+    z-index:1;
+}
+
+table.data-table tbody td{
+    padding:11px 22px;
+    border-bottom:1px solid #f1f5f9;
+    color:#1e293b;
+    white-space:nowrap;
+}
+
+table.data-table tbody tr:last-child td{
+    border-bottom:none;
+}
+
+table.data-table tbody tr:hover{
+    background:#f8fafc;
+}
+
+.dtype-badge{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:11.5px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:6px;
+    background:#eef2f7;
+    color:#475569;
+    border:1px solid #e2e8f0;
+}
+
+/* Missing-value density bar — the signature visual of this page */
+
+.missing-cell{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:160px;
+}
+
+.missing-bar-track{
+    flex:1;
+    height:6px;
+    border-radius:4px;
+    background:#eef2f7;
+    overflow:hidden;
+}
+
+.missing-bar-fill{
+    height:100%;
+    border-radius:4px;
+    background:linear-gradient(90deg,#2563eb,#06b6d4);
+}
+
+.missing-bar-fill.high{
+    background:linear-gradient(90deg,#f59e0b,#dc2626);
+}
+
+.missing-pct{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:12px;
+    color:#64748b;
+    width:42px;
+    flex-shrink:0;
+    text-align:right;
+}
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media(max-width:768px){
+
+    .dataset-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .upload-zone{
+        padding:40px 18px;
+    }
+
+    .missing-cell{
+        min-width:120px;
+    }
+}

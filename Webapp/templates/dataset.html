@@ -1,92 +1,171 @@
 {% extends "base.html" %}
 
+{% block title %}Dataset Analyzer · RAG-Powered ML Workbench{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/dataset.css') }}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Dataset Analyzer</h1>
+<div class="dataset-container">
 
-<div class="upload-box">
+    <!-- ===========================
+         Header
+    ============================ -->
 
-    <input
-            type="file"
-            id="csvFile"
-            accept=".csv">
+    <div class="dataset-header">
 
-    <button id="uploadBtn">
+        <div>
+            <h1>📂 Dataset Analyzer</h1>
+            <p>
+                Upload a dataset to profile its columns, types, missing values,
+                and duplicates before cleaning or training.
+            </p>
+        </div>
 
-        Analyze Dataset
-
-    </button>
-
-</div>
-
-<div class="summary-grid">
-
-    <div class="card">
-
-        <h3>Rows</h3>
-
-        <p id="rows">-</p>
+        <div id="reportFilenamePill" class="dataset-file-pill empty">
+            <span class="dot"></span>
+            <span id="reportFilename">No dataset loaded</span>
+        </div>
 
     </div>
 
-    <div class="card">
+    <!-- ===========================
+         Body
+    ============================ -->
 
-        <h3>Columns</h3>
+    <div class="dataset-body">
 
-        <p id="columns">-</p>
+        <!-- Upload zone -->
+
+        <div id="uploadZone" class="upload-zone">
+
+            <div id="uploadZoneInner">
+                <div class="upload-icon">⬆️</div>
+                <h2>Drop a dataset here</h2>
+                <p>or click to browse — CSV only</p>
+                <button id="browseBtn" type="button" class="upload-browse-btn">Browse files</button>
+            </div>
+
+            <input id="fileInput" type="file" accept=".csv" class="hidden">
+
+        </div>
+
+        <div id="uploadError" class="upload-error hidden"></div>
+
+        <!-- Report -->
+
+        <div id="reportSection" class="report-section hidden">
+
+            <div class="report-toolbar">
+                <button id="resetBtn" type="button" class="reset-btn">Analyze another dataset</button>
+            </div>
+
+            <div id="summaryGrid" class="summary-grid"></div>
+
+            <!-- Column type mix -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Column types</h3>
+                    <span id="columnTypesTotal"></span>
+                </div>
+                <div class="panel-body">
+                    <div id="typeBar" class="type-bar"></div>
+                    <div id="typeLegend" class="type-legend"></div>
+                </div>
+            </div>
+
+            <!-- Missing values -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Missing values</h3>
+                    <span id="missingSubtitle"></span>
+                </div>
+                <div id="missingEmpty" class="empty-state hidden">No missing values found — every column is fully populated.</div>
+                <div id="missingPanelScroll" class="panel-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Column</th>
+                                <th>Missing</th>
+                                <th>% of rows</th>
+                            </tr>
+                        </thead>
+                        <tbody id="missingTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Data quality checks -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Data quality checks</h3>
+                    <span>Outliers, constant columns, high-cardinality columns</span>
+                </div>
+                <div class="quality-checks">
+
+                    <div class="quality-row">
+                        <div class="quality-label">Outliers <span class="quality-hint">(IQR method)</span></div>
+                        <div id="outliersValue" class="quality-value"></div>
+                    </div>
+
+                    <div class="quality-row">
+                        <div class="quality-label">Constant columns</div>
+                        <div id="constantValue" class="quality-value"></div>
+                    </div>
+
+                    <div class="quality-row">
+                        <div class="quality-label">High-cardinality columns</div>
+                        <div id="cardinalityValue" class="quality-value"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Correlations -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Highly correlated features</h3>
+                    <span>Pairs with |r| ≥ 0.90</span>
+                </div>
+                <div id="correlationsEmpty" class="empty-state hidden">No feature pairs correlated above 0.90.</div>
+                <div id="correlationsPanelScroll" class="panel-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Feature 1</th>
+                                <th>Feature 2</th>
+                                <th>Correlation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="correlationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+
+            <div class="panel recommendations-panel">
+                <div class="panel-header">
+                    <h3>Recommendations</h3>
+                    <span>Suggested next steps</span>
+                </div>
+                <ul id="recommendationsList" class="recommendations-list"></ul>
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="card">
-
-        <h3>Memory</h3>
-
-        <p id="memory">-</p>
-
-    </div>
-
 </div>
 
-<div class="section">
+{% endblock %}
 
-    <h2>Column Types</h2>
-
-    <table id="columnTypesTable"></table>
-
-</div>
-
-<div class="section">
-
-    <h2>Missing Values</h2>
-
-    <table id="missingTable"></table>
-
-</div>
-
-<div class="section">
-
-    <h2>High Correlations</h2>
-
-    <table id="correlationTable"></table>
-
-</div>
-
-<div class="section">
-
-    <h2>Outliers</h2>
-
-    <table id="outlierTable"></table>
-
-</div>
-
-<div class="section">
-
-    <h2>Recommendations</h2>
-
-    <ul id="recommendationList"></ul>
-
-</div>
-
+{% block extra_js %}
 <script src="{{ url_for('static', path='js/dataset.js') }}"></script>
-
 {% endblock %}
