@@ -20,6 +20,7 @@ from RAG.chat import ChatService
 from RAG.ingest import RAGIngestor
 from RAG.vectorstore import VectorStoreManager
 from DataCleaning.clean import DataCleaner
+from FeatureEngineering.feature_eng import FeatureEngineer
 
 
 app = FastAPI()
@@ -36,6 +37,9 @@ REPORT_DIR.mkdir(exist_ok=True)
 
 CLEANED_DIR = Path("cleaned_datasets")
 CLEANED_DIR.mkdir(exist_ok=True)
+
+FEATURE_DIR = Path("feature_engineered_datasets")
+FEATURE_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(
     directory="Webapp/templates"
@@ -114,6 +118,58 @@ async def cleaning(request: Request):
             detail="Failed to load cleaning page."
 
         )
+
+# ----------------------------------------------------
+# Feature Engineering Page
+# ----------------------------------------------------
+
+@app.get("/feature")
+async def feature_engineering(request: Request):
+
+    try:
+
+        columns = []
+
+        if app.state.current_dataset is not None:
+
+            df = pd.read_csv(
+                app.state.current_dataset,
+                nrows=0
+            )
+
+            columns = df.columns.tolist()
+
+        return templates.TemplateResponse(
+
+            request=request,
+
+            name="feature.html",
+
+            context={
+
+                "request": request,
+
+                "columns": columns
+
+            }
+
+        )
+
+    except Exception:
+
+        logging.exception(
+            "Failed to load feature engineering page."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to load feature engineering page."
+
+        )
+    
+
 # ----------------------------------------------------
 # Dataset Upload
 # ----------------------------------------------------
@@ -144,6 +200,9 @@ async def upload_dataset(
             old_report.unlink()
 
         for old_file in CLEANED_DIR.glob("*"):
+            old_file.unlink()
+
+        for old_file in FEATURE_DIR.glob("*"):
             old_file.unlink()
 
         # -----------------------------
@@ -333,6 +392,170 @@ async def clean_dataset(
             status_code=500,
 
             detail="Failed to clean dataset."
+
+        )
+
+
+# ----------------------------------------------------
+# Feature Engineering Request
+# ----------------------------------------------------
+
+class FeatureEngineeringRequest(BaseModel):
+
+    target_column: str
+
+    categorical_encoding: str = "none"
+
+    scaling: str = "none"
+
+    correlation_threshold: float = 0.90
+
+@app.post("/feature")
+async def feature_engineering(
+
+    body: FeatureEngineeringRequest
+
+):
+
+    try:
+
+        logging.info(
+            "Starting feature engineering."
+        )
+
+        if app.state.current_dataset is None:
+
+            raise HTTPException(
+
+                status_code=400,
+
+                detail="Please upload a dataset first."
+
+            )
+
+        engineer = FeatureEngineer(
+
+            dataset_path=app.state.current_dataset,
+
+            target_column=body.target_column,
+
+            categorical_encoding=body.categorical_encoding,
+
+            scaling=body.scaling,
+
+            correlation_threshold=body.correlation_threshold
+
+        )
+
+        engineered_dataframe, report = engineer.engineer()
+
+        # ----------------------------------
+        # Save dataset
+        # ----------------------------------
+
+        feature_path = FEATURE_DIR / Path(
+
+            app.state.current_dataset
+
+        ).name
+
+        engineered_dataframe.to_csv(
+
+            feature_path,
+
+            index=False
+
+        )
+
+        app.state.current_dataset = feature_path
+
+        logging.info(
+
+            f"Feature engineered dataset saved at {feature_path}"
+
+        )
+
+        # ----------------------------------
+        # Save report
+        # ----------------------------------
+
+        feature_report_path = REPORT_DIR / (
+
+            f"{feature_path.stem}_feature.json"
+
+        )
+
+        with open(
+
+            feature_report_path,
+
+            "w",
+
+            encoding="utf-8"
+
+        ) as file:
+
+            json.dump(
+
+                report,
+
+                file,
+
+                indent=4
+
+            )
+
+        logging.info(
+
+            f"Feature engineering report saved at {feature_report_path}"
+
+        )
+
+        # ----------------------------------
+        # Add report to RAG
+        # ----------------------------------
+
+        RAGIngestor().add_report(
+
+            json_path=str(feature_report_path),
+
+            report_type="feature_engineering"
+
+        )
+
+        logging.info(
+
+            "Feature engineering report added to vector store."
+
+        )
+
+        return {
+
+            "success": True,
+
+            "message": "Feature engineering completed successfully.",
+
+            "report": report
+
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception:
+
+        logging.exception(
+
+            "Feature engineering failed."
+
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to perform feature engineering."
 
         )
 

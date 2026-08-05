@@ -8,36 +8,25 @@
 
 {% block content %}
 
-<div class="clean-container">
+<div class="cleaning-container">
 
     <!-- ===========================
          Header
     ============================ -->
 
-    <div class="clean-header">
+    <div class="cleaning-header">
 
         <div>
-
             <h1>🧹 Data Cleaning</h1>
-
             <p>
-                Automatically clean your uploaded dataset by removing duplicates,
-                handling missing values, fixing data types, removing constant
-                columns, and optionally removing selected columns.
+                Remove duplicates, fill missing values, drop constant or unwanted
+                columns, and fix data types — then review exactly what changed.
             </p>
-
         </div>
 
-        <div id="datasetPill" class="dataset-file-pill">
-
+        <div id="datasetPill" class="cleaning-file-pill {% if not columns %}empty{% endif %}">
             <span class="dot"></span>
-
-            <span id="datasetPillText">
-
-                Dataset Ready
-
-            </span>
-
+            <span id="datasetPillText">{% if columns %}Dataset ready{% else %}No dataset loaded{% endif %}</span>
         </div>
 
     </div>
@@ -46,282 +35,152 @@
          Body
     ============================ -->
 
-    <div class="clean-body">
+    <div class="cleaning-body">
 
-        <!-- Cleaning Options -->
+        {% if not columns %}
 
-        <div class="panel">
+        <div class="panel no-dataset-panel">
+            <div class="panel-body">
+                <div class="no-dataset-state">
+                    <span class="no-dataset-icon">📄</span>
+                    <h2>No dataset loaded yet</h2>
+                    <p>Upload a dataset first, then come back here to clean it.</p>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- Configuration panel -->
+
+        <div id="configPanel" class="panel config-panel">
 
             <div class="panel-header">
-
-                <h3>Cleaning Options</h3>
-
-                <span>Select columns to remove (optional)</span>
-
+                <h3>Columns to remove</h3>
+                <span id="selectedCountLabel">Optional — pick any columns to drop</span>
             </div>
 
             <div class="panel-body">
 
-                <label class="field-label">
-
-                    Remove Columns
-
-                </label>
-
-                <select
-                    id="columnSelect"
-                    class="column-select"
-                    multiple
-                >
-
-                    {% if columns %}
-
-                        {% for column in columns %}
-
-                            <option value="{{ column }}">
-
-                                {{ column }}
-
-                            </option>
-
-                        {% endfor %}
-
-                    {% else %}
-
-                        <option disabled>
-
-                            No dataset uploaded
-
-                        </option>
-
-                    {% endif %}
-
-                </select>
-
-                <small class="field-help">
-
-                    Hold <strong>Ctrl</strong> (Windows/Linux) or
-                    <strong>⌘ Command</strong> (Mac) to select multiple columns.
-
-                </small>
-
-            </div>
-
-        </div>
-
-        <div
-            id="cleaningError"
-            class="upload-error hidden"
-        ></div>
-
-        <!-- Buttons -->
-
-        <div class="action-bar">
-
-            <button
-                id="cleanBtn"
-                type="button"
-                class="primary-btn"
-            >
-
-                <span id="cleanBtnText">
-
-                    Clean Dataset
-
-                </span>
-
-            </button>
-
-            <button
-                id="cleanAgainBtn"
-                type="button"
-                class="secondary-btn hidden"
-            >
-
-                Clean Again
-
-            </button>
-
-        </div>
-
-        <!-- ===========================
-             Cleaning Report
-        ============================ -->
-
-        <div
-            id="resultsSection"
-            class="report-section hidden"
-        >
-
-            <div
-                id="summaryGrid"
-                class="summary-grid"
-            ></div>
-
-            <!-- Shape -->
-
-            <div class="panel">
-
-                <div class="panel-header">
-
-                    <h3>Dataset Shape</h3>
-
+                <div class="column-toolbar">
+                    <input id="columnSearch" type="text" placeholder="Search columns…" autocomplete="off">
+                    <div class="column-toolbar-actions">
+                        <button id="selectAllBtn" type="button" class="text-btn">Select all</button>
+                        <button id="clearAllBtn" type="button" class="text-btn">Clear</button>
+                    </div>
                 </div>
 
-                <div
-                    id="shapeCompare"
-                    class="shape-compare"
-                ></div>
+                <div id="columnChecklist" class="column-checklist">
+                    {% for column in columns %}
+                    <label class="column-check-item" data-column-name="{{ column|lower }}">
+                        <input type="checkbox" class="column-checkbox" value="{{ column }}">
+                        <span class="column-check-label">{{ column }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <div class="config-actions">
+                    <button id="cleanBtn" type="button" class="clean-btn">
+                        <span id="cleanBtnText">Clean dataset</span>
+                    </button>
+                    <button id="cleanAgainBtn" type="button" class="clean-again-btn hidden">Clean another dataset</button>
+                </div>
+
+                <div id="cleaningError" class="cleaning-error hidden"></div>
 
             </div>
 
-            <!-- Missing -->
+        </div>
+
+        <!-- Results -->
+
+        <div id="resultsSection" class="results-section hidden">
+
+            <div class="summary-grid" id="summaryGrid"></div>
+
+            <!-- Duplicates + shape -->
 
             <div class="panel">
-
                 <div class="panel-header">
+                    <h3>Dataset shape</h3>
+                    <span>Before vs. after cleaning</span>
+                </div>
+                <div class="panel-body">
+                    <div id="shapeCompare" class="shape-compare"></div>
+                </div>
+            </div>
 
-                    <h3>Missing Values Handled</h3>
+            <!-- Missing values handled -->
 
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Missing values handled</h3>
                     <span id="missingHandledSubtitle"></span>
-
                 </div>
-
-                <div
-                    id="missingHandledEmpty"
-                    class="empty-state hidden"
-                >
-
-                    No missing values were handled.
-
-                </div>
-
-                <div
-                    id="missingHandledScroll"
-                    class="panel-scroll hidden"
-                >
-
+                <div id="missingHandledEmpty" class="empty-state hidden">No missing values needed handling.</div>
+                <div id="missingHandledScroll" class="panel-scroll">
                     <table class="data-table">
-
                         <thead>
-
                             <tr>
-
                                 <th>Column</th>
-
-                                <th>Count</th>
-
+                                <th>Missing filled</th>
                                 <th>Method</th>
-
                             </tr>
-
                         </thead>
-
                         <tbody id="missingHandledBody"></tbody>
-
                     </table>
-
                 </div>
-
             </div>
 
-            <!-- Removed Columns -->
+            <!-- Constant columns removed -->
 
             <div class="panel">
-
                 <div class="panel-header">
-
-                    <h3>Removed Columns</h3>
-
+                    <h3>Constant columns removed</h3>
+                    <span>Columns with only one unique value</span>
                 </div>
-
-                <div class="quality-checks">
-
-                    <div class="quality-row">
-
-                        <div class="quality-label">
-
-                            Constant Columns
-
-                        </div>
-
-                        <div
-                            id="constantRemoved"
-                            class="quality-value"
-                        ></div>
-
-                    </div>
-
-                    <div class="quality-row">
-
-                        <div class="quality-label">
-
-                            User Selected Columns
-
-                        </div>
-
-                        <div
-                            id="userRemoved"
-                            class="quality-value"
-                        ></div>
-
-                    </div>
-
+                <div class="panel-body">
+                    <div id="constantRemoved" class="badge-cluster"></div>
                 </div>
-
             </div>
 
-            <!-- Datatype Changes -->
+            <!-- User removed columns -->
 
             <div class="panel">
-
                 <div class="panel-header">
+                    <h3>Manually removed columns</h3>
+                    <span>Columns you selected above</span>
+                </div>
+                <div class="panel-body">
+                    <div id="userRemoved" class="badge-cluster"></div>
+                </div>
+            </div>
 
-                    <h3>Data Type Changes</h3>
+            <!-- Datatype changes -->
 
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Data type changes</h3>
                     <span id="datatypeSubtitle"></span>
-
                 </div>
-
-                <div
-                    id="datatypeEmpty"
-                    class="empty-state hidden"
-                >
-
-                    No datatype changes were made.
-
-                </div>
-
-                <div
-                    id="datatypeScroll"
-                    class="panel-scroll hidden"
-                >
-
+                <div id="datatypeEmpty" class="empty-state hidden">No columns needed type conversion.</div>
+                <div id="datatypeScroll" class="panel-scroll">
                     <table class="data-table">
-
                         <thead>
-
                             <tr>
-
                                 <th>Column</th>
-
-                                <th>Before</th>
-
-                                <th>After</th>
-
+                                <th>From</th>
+                                <th>To</th>
                             </tr>
-
                         </thead>
-
                         <tbody id="datatypeBody"></tbody>
-
                     </table>
-
                 </div>
-
             </div>
 
         </div>
+
+        {% endif %}
 
     </div>
 

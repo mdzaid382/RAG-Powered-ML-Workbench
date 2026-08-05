@@ -44,17 +44,30 @@
                    class="{{ 'active' if request.url.path == '/clean' else '' }}">
                    🧹 Data Cleaning</a>
             </li>
-
+            
             <li>
-                <a href="#">⚙️ Model Training</a>
+                <a href="/feature"
+                   class="{{ 'active' if request.url.path == '/feature' else '' }}">
+                    🛠️ Feature Engineering
+                </a>
             </li>
-
+            
             <li>
-                <a href="#">📈 Evaluation</a>
+                <a href="#">
+                    ⚙️ Model Training
+                </a>
             </li>
-
+            
             <li>
-                <a href="#">📜 History</a>
+                <a href="#">
+                    📈 Evaluation
+                </a>
+            </li>
+            
+            <li>
+                <a href="#">
+                    📜 History
+                </a>
             </li>
 
         </ul>

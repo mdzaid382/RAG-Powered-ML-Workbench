@@ -1,8 +1,11 @@
 /* ==========================================================
    DATA CLEANING
+   Same token system as dataset.css / assistant.css:
+   ink #0f172a · muted #64748b · line #e2e8f0
+   accent #2563eb · accent-2 #06b6d4 · ok #22c55e · warn #f59e0b
 ========================================================== */
 
-.clean-container{
+.cleaning-container{
     display:flex;
     flex-direction:column;
     height:calc(100vh - 70px);
@@ -12,659 +15,535 @@
    Header
 ========================================================== */
 
-.clean-header{
+.cleaning-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:20px;
-    flex-wrap:wrap;
-
     padding:22px 30px;
-    margin-bottom:20px;
-
-    background:#fff;
-    border:1px solid #eef1f6;
+    background:white;
     border-radius:14px;
-
-    box-shadow:0 1px 2px rgba(15,23,42,.04),
-               0 8px 24px rgba(15,23,42,.06);
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    margin-bottom:20px;
+    border:1px solid #eef1f6;
+    flex-wrap:wrap;
+    gap:14px;
 }
 
-.clean-header h1{
+.cleaning-header h1{
     margin:0;
     font-size:24px;
+    letter-spacing:-0.01em;
     color:#0f172a;
 }
 
-.clean-header p{
+.cleaning-header p{
     margin-top:6px;
-    max-width:620px;
-    line-height:1.5;
-    font-size:14px;
     color:#64748b;
+    font-size:14px;
+    max-width:560px;
+    line-height:1.5;
 }
 
-/* ==========================================================
-   Dataset pill
-========================================================== */
-
-.dataset-file-pill{
+.cleaning-file-pill{
     display:flex;
     align-items:center;
     gap:10px;
-
-    padding:8px 14px;
-
+    font-weight:600;
+    font-size:13px;
+    color:#1e293b;
     background:#f8fafc;
     border:1px solid #e2e8f0;
+    padding:8px 14px;
     border-radius:999px;
-
-    font-size:13px;
-    font-weight:600;
-    color:#1e293b;
 }
 
-.dataset-file-pill .dot{
+.cleaning-file-pill .dot{
     width:8px;
     height:8px;
     border-radius:50%;
     background:#22c55e;
+    flex-shrink:0;
+}
+
+.cleaning-file-pill.empty .dot{
+    background:#cbd5e1;
 }
 
 /* ==========================================================
-   Body
+   Body / scroll area
 ========================================================== */
 
-.clean-body{
+.cleaning-body{
     flex:1;
     overflow-y:auto;
+    padding-right:4px;
     display:flex;
     flex-direction:column;
     gap:20px;
-    padding-right:4px;
 }
 
-.clean-body::-webkit-scrollbar{
+.cleaning-body::-webkit-scrollbar{
     width:8px;
 }
-
-.clean-body::-webkit-scrollbar-thumb{
+.cleaning-body::-webkit-scrollbar-thumb{
     background:#dbe3ee;
     border-radius:8px;
 }
 
 /* ==========================================================
-   Panels
+   Panels (shared shell)
 ========================================================== */
 
 .panel{
-
-    background:#fff;
-
+    background:white;
     border:1px solid #eef1f6;
     border-radius:14px;
-
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
     overflow:hidden;
-
-    box-shadow:
-        0 1px 2px rgba(15,23,42,.04),
-        0 8px 24px rgba(15,23,42,.06);
-
 }
 
 .panel-header{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
     padding:16px 22px;
-
     border-bottom:1px solid #eef1f6;
-
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 }
 
 .panel-header h3{
-
     margin:0;
-
     font-size:15px;
     color:#0f172a;
-
 }
 
 .panel-header span{
-
-    font-size:12px;
+    font-size:12.5px;
     color:#94a3b8;
-
 }
 
 .panel-body{
-
-    padding:22px;
-
+    padding:20px 22px;
 }
 
-/* ==========================================================
-   Form
-========================================================== */
-
-.field-label{
-
-    display:block;
-
-    margin-bottom:10px;
-
-    font-size:13px;
-    font-weight:600;
-
-    color:#334155;
-
+.panel-scroll{
+    overflow-x:auto;
+    max-height:420px;
+    overflow-y:auto;
 }
 
-.field-help{
-
-    display:block;
-
-    margin-top:10px;
-
+.empty-state{
+    padding:26px 22px;
     color:#64748b;
-    font-size:12px;
-
+    font-size:13.5px;
 }
 
 /* ==========================================================
-   Column Select
+   No dataset state
 ========================================================== */
 
-.column-select{
-
-    width:100%;
-    min-height:220px;
-
-    padding:12px;
-
-    border:1px solid #dbe3ee;
-    border-radius:10px;
-
-    background:#f8fafc;
-
-    font-size:14px;
-    color:#0f172a;
-
-    outline:none;
-
-    transition:.2s;
-
+.no-dataset-panel .panel-body{
+    padding:60px 30px;
 }
 
-.column-select:focus{
-
-    border-color:#2563eb;
-    background:#fff;
-
-}
-
-.column-select option{
-
-    padding:8px 12px;
-
-}
-
-.column-select option:checked{
-
-    background:#2563eb;
-    color:#fff;
-
-}
-
-/* ==========================================================
-   Buttons
-========================================================== */
-
-.action-bar{
-
+.no-dataset-state{
     display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:6px;
 }
 
-.primary-btn{
+.no-dataset-icon{
+    font-size:34px;
+    margin-bottom:10px;
+}
 
+.no-dataset-state h2{
+    margin:0;
+    font-size:18px;
+    color:#0f172a;
+}
+
+.no-dataset-state p{
+    color:#64748b;
+    font-size:14px;
+    max-width:360px;
+}
+
+/* ==========================================================
+   Configuration panel — column checklist for columns to remove
+========================================================== */
+
+.config-panel{
+    flex-shrink:0;
+}
+
+.column-toolbar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+}
+
+#columnSearch{
+    flex:1;
+    min-width:180px;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:9px 14px;
+    font-size:13.5px;
+    color:#0f172a;
+    background:#f8fafc;
+    outline:none;
+    transition:border-color .15s ease, background-color .15s ease;
+}
+
+#columnSearch:focus{
+    border-color:#2563eb;
+    background:white;
+}
+
+.column-toolbar-actions{
+    display:flex;
+    gap:14px;
+    flex-shrink:0;
+}
+
+.text-btn{
+    border:none;
+    background:none;
+    color:#2563eb;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    padding:4px 2px;
+}
+
+.text-btn:hover{
+    text-decoration:underline;
+}
+
+.column-checklist{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    gap:4px 12px;
+    max-height:260px;
+    overflow-y:auto;
+    border:1px solid #eef1f6;
+    border-radius:10px;
+    padding:10px 14px;
+    background:#fbfcfe;
+}
+
+.column-check-item{
     display:flex;
     align-items:center;
     gap:10px;
+    padding:8px 6px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13.5px;
+    color:#1e293b;
+    transition:background .12s ease;
+}
 
-    padding:12px 22px;
+.column-check-item:hover{
+    background:#eff6ff;
+}
 
+.column-check-item.column-hidden{
+    display:none;
+}
+
+.column-checkbox{
+    width:16px;
+    height:16px;
+    accent-color:#2563eb;
+    flex-shrink:0;
+    cursor:pointer;
+}
+
+.column-check-label{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.config-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:18px;
+}
+
+.clean-btn{
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:white;
     border:none;
     border-radius:10px;
-
-    cursor:pointer;
-
-    background:linear-gradient(135deg,#2563eb,#06b6d4);
-    color:#fff;
-
-    font-size:14px;
     font-weight:600;
-
-    transition:.15s;
-
+    font-size:14px;
+    padding:11px 24px;
+    cursor:pointer;
+    box-shadow:0 10px 24px rgba(37,99,235,.22);
+    transition:transform .1s ease, opacity .15s ease;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.primary-btn:hover{
-
+.clean-btn:hover{
     transform:translateY(-1px);
-
 }
 
-.primary-btn:disabled{
-
-    opacity:.6;
-    cursor:not-allowed;
-
+.clean-btn:disabled{
+    opacity:.65;
+    cursor:default;
+    transform:none;
 }
 
-.secondary-btn{
-
-    padding:12px 18px;
-
-    border-radius:10px;
-    border:1px solid #dbeafe;
-
-    background:#fff;
-
+.clean-again-btn{
+    background:white;
     color:#2563eb;
-
-    cursor:pointer;
-
-    font-size:14px;
+    border:1px solid #dbeafe;
+    border-radius:10px;
     font-weight:600;
-
+    font-size:13.5px;
+    padding:10px 16px;
+    cursor:pointer;
+    transition:background .15s ease;
 }
 
-.secondary-btn:hover{
-
+.clean-again-btn:hover{
     background:#eff6ff;
-
 }
 
-/* ==========================================================
-   Error
-========================================================== */
-
-.upload-error{
-
+.cleaning-error{
+    margin-top:14px;
     color:#b91c1c;
-
     background:#fef2f2;
-
     border:1px solid #fecaca;
-
-    padding:12px 16px;
-
+    padding:10px 16px;
     border-radius:8px;
+    font-size:13.5px;
+}
 
-    font-size:13px;
+/* Small inline spinner for the clean button while running */
 
+.btn-spinner{
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:white;
+    animation:spin .8s linear infinite;
+    flex-shrink:0;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
 }
 
 /* ==========================================================
    Results
 ========================================================== */
 
-.report-section{
-
+.results-section{
     display:flex;
     flex-direction:column;
     gap:20px;
-
 }
 
 .summary-grid{
-
     display:grid;
-
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-
-    gap:16px;
-
+    gap:14px;
 }
 
 .stat-card{
-
-    background:#fff;
-
+    background:white;
     border:1px solid #eef1f6;
     border-radius:12px;
-
-    padding:18px;
-
+    padding:18px 20px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);
 }
 
-.stat-label{
-
-    font-size:12px;
-
-    color:#94a3b8;
-
-    text-transform:uppercase;
-
+.stat-card .stat-label{
+    font-size:12.5px;
     font-weight:600;
-
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:#94a3b8;
+    margin-bottom:8px;
 }
 
-.stat-value{
-
-    margin-top:8px;
-
-    font-size:28px;
+.stat-card .stat-value{
+    font-size:26px;
     font-weight:700;
-
+    color:#0f172a;
+    letter-spacing:-0.01em;
 }
 
 .stat-card.ok .stat-value{
-
-    color:#16a34a;
-
+    color:#166534;
 }
 
 .stat-card.warn .stat-value{
-
-    color:#d97706;
-
+    color:#b45309;
 }
 
-/* ==========================================================
-   Shape
-========================================================== */
+/* Before / after shape comparison */
 
 .shape-compare{
-
     display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
-    gap:18px;
-
-    padding:22px;
-
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px;
 }
 
 .shape-item{
-
     display:flex;
     flex-direction:column;
     gap:8px;
-
 }
 
 .shape-label{
-
-    font-size:12px;
-
-    text-transform:uppercase;
-
+    font-size:12.5px;
+    font-weight:600;
     color:#94a3b8;
-
+    text-transform:uppercase;
+    letter-spacing:.03em;
 }
 
 .shape-track{
-
     display:flex;
-    align-items:center;
+    align-items:baseline;
     gap:10px;
-
 }
 
 .shape-value{
-
     font-size:20px;
     font-weight:700;
-
+    color:#0f172a;
 }
 
 .shape-arrow{
-
     color:#94a3b8;
-
+    font-size:14px;
 }
 
 .shape-delta{
-
-    padding:3px 8px;
-
-    border-radius:6px;
-
-    background:#f0fdf4;
-
-    color:#166534;
-
-    font-size:12px;
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:12.5px;
     font-weight:600;
-
+    padding:2px 8px;
+    border-radius:6px;
+    background:#f0fdf4;
+    color:#166534;
 }
 
 .shape-delta.neutral{
-
     background:#f1f5f9;
-
     color:#64748b;
-
 }
 
-/* ==========================================================
-   Tables
-========================================================== */
+/* Badge clusters (constant / user-removed columns) */
 
-.panel-scroll{
-
-    max-height:350px;
-
-    overflow:auto;
-
-}
-
-.data-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-}
-
-.data-table thead th{
-
-    position:sticky;
-    top:0;
-
-    background:#f8fafc;
-
-    padding:12px 18px;
-
-    text-align:left;
-
-    font-size:13px;
-
-    color:#475569;
-
-}
-
-.data-table tbody td{
-
-    padding:12px 18px;
-
-    border-bottom:1px solid #eef2f7;
-
-}
-
-.data-table tbody tr:hover{
-
-    background:#f8fafc;
-
-}
-
-.dtype-badge{
-
-    display:inline-block;
-
-    padding:3px 8px;
-
-    border-radius:6px;
-
-    background:#eef2f7;
-
-    border:1px solid #dbe3ee;
-
-    font-size:12px;
-
-}
-
-/* ==========================================================
-   Removed Columns
-========================================================== */
-
-.quality-checks{
-
-    padding:22px;
-
-}
-
-.quality-row{
-
+.badge-cluster{
     display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-
-    padding:14px 0;
-
-    border-bottom:1px solid #eef2f7;
-
-}
-
-.quality-row:last-child{
-
-    border-bottom:none;
-
-}
-
-.quality-label{
-
-    font-weight:600;
-
-    color:#334155;
-
-}
-
-.quality-value{
-
-    display:flex;
-
     flex-wrap:wrap;
-
-    justify-content:flex-end;
-
     gap:8px;
+}
 
+.badge-cluster .badge-empty{
+    color:#166534;
+    font-size:13px;
+    font-weight:600;
 }
 
 .badge{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    padding:5px 10px;
-
-    border-radius:999px;
-
     font-size:12px;
     font-weight:600;
-
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
 }
 
 .badge-danger{
-
     background:#fef2f2;
-
     color:#b91c1c;
-
+    border:1px solid #fecaca;
 }
 
 .badge-info{
-
     background:#eff6ff;
-
-    color:#2563eb;
-
+    color:#1d4ed8;
+    border:1px solid #dbeafe;
 }
 
-.badge-empty{
+/* Tables */
 
-    color:#64748b;
-
-    font-size:13px;
-
+table.data-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
 }
 
-/* ==========================================================
-   Empty state
-========================================================== */
-
-.empty-state{
-
-    padding:24px;
-
-    color:#64748b;
-
-    font-size:13px;
-
+table.data-table thead th{
+    position:sticky;
+    top:0;
+    background:#f8fafc;
+    text-align:left;
+    padding:11px 22px;
+    font-weight:600;
+    color:#475569;
+    border-bottom:1px solid #eef1f6;
+    white-space:nowrap;
+    z-index:1;
 }
 
-/* ==========================================================
-   Utility
-========================================================== */
+table.data-table tbody td{
+    padding:11px 22px;
+    border-bottom:1px solid #f1f5f9;
+    color:#1e293b;
+    white-space:nowrap;
+}
 
-.hidden{
+table.data-table tbody tr:last-child td{
+    border-bottom:none;
+}
 
-    display:none !important;
+table.data-table tbody tr:hover{
+    background:#f8fafc;
+}
 
+.dtype-badge{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:11.5px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:6px;
+    background:#eef2f7;
+    color:#475569;
+    border:1px solid #e2e8f0;
 }
 
 /* ==========================================================
    Responsive
 ========================================================== */
 
-@media (max-width:768px){
+@media(max-width:768px){
 
-    .clean-header{
-
+    .cleaning-header{
         flex-direction:column;
         align-items:flex-start;
-
     }
 
-    .action-bar{
-
-        flex-direction:column;
-
+    .quality-label{
+        width:auto;
     }
 
-    .primary-btn,
-    .secondary-btn{
-
-        width:100%;
-        justify-content:center;
-
+    .config-actions{
+        flex-wrap:wrap;
     }
-
-    .quality-row{
-
-        flex-direction:column;
-        gap:10px;
-
-    }
-
 }
