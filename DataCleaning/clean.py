@@ -246,45 +246,34 @@ class DataCleaner:
     # ---------------------------------------------------
 
     def fix_datatypes(self):
-
+    
         try:
-
+    
             for column in self.df.columns:
-
-                original = str(self.df[column].dtype)
-
-                converted = pd.to_numeric(
-
-                    self.df[column],
-
-                    errors="ignore"
-
-                )
-
-                self.df[column] = converted
-
-                new = str(self.df[column].dtype)
-
-                if original != new:
-
+    
+                original_dtype = str(self.df[column].dtype)
+    
+                try:
+                    converted = pd.to_numeric(self.df[column])
+                except (ValueError, TypeError):
+                    continue
+    
+                new_dtype = str(converted.dtype)
+    
+                if original_dtype != new_dtype:
+    
+                    self.df[column] = converted
+    
                     self.report["datatype_changes"][column] = {
-
-                        "from": original,
-
-                        "to": new
-
+                        "from": original_dtype,
+                        "to": new_dtype
                     }
-
-            logging.info(
-                "Data type conversion completed."
-            )
-
+    
+            logging.info("Data type conversion completed.")
+    
         except Exception:
-
-            logging.exception(
-                "Data type conversion failed."
-            )
-
+    
+            logging.exception("Data type conversion failed.")
             raise
 
     # ---------------------------------------------------

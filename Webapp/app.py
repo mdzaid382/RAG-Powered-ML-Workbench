@@ -1,12 +1,15 @@
 from pathlib import Path
 import shutil
+import json
 
 import pandas as pd
+from Logger import logging
 
 from fastapi import FastAPI
 from fastapi import UploadFile
 from fastapi import File
 from fastapi.requests import Request
+from fastapi import HTTPException
 from pydantic import BaseModel
 
 from fastapi.staticfiles import StaticFiles
@@ -16,14 +19,23 @@ from DataProfiling.Profiling import DatasetAnalyzer
 from RAG.chat import ChatService
 from RAG.ingest import RAGIngestor
 from RAG.vectorstore import VectorStoreManager
+from DataCleaning.clean import DataCleaner
 
 
 app = FastAPI()
+
+app.state.current_dataset = None
 
 chat_service = ChatService()
 
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
+
+REPORT_DIR = Path("reports")
+REPORT_DIR.mkdir(exist_ok=True)
+
+CLEANED_DIR = Path("cleaned_datasets")
+CLEANED_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(
     directory="Webapp/templates"
@@ -57,6 +69,51 @@ async def assistant(request: Request):
     )
 
 
+@app.get("/clean")
+async def cleaning(request: Request):
+
+    try:
+
+        columns = []
+
+        if app.state.current_dataset is not None:
+
+            df = pd.read_csv(
+                app.state.current_dataset,
+                nrows=0
+            )
+
+            columns = df.columns.tolist()
+
+        return templates.TemplateResponse(
+
+            request=request,
+
+            name="clean.html",
+
+            context={
+
+                "request": request,
+
+                "columns": columns
+
+            }
+
+        )
+
+    except Exception:
+
+        logging.exception(
+            "Failed to load cleaning page."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to load cleaning page."
+
+        )
 # ----------------------------------------------------
 # Dataset Upload
 # ----------------------------------------------------
@@ -66,57 +123,218 @@ async def upload_dataset(
     file: UploadFile = File(...)
 ):
 
-    # -----------------------------
-    # Clear Previous Project
-    # -----------------------------
+    try:
 
-    # Reset vector store
-    VectorStoreManager().reset()
+        logging.info("Uploading new dataset.")
 
-    # Clear chat memory
-    chat_service.memory.clear_all()
+        # -----------------------------
+        # Reset previous project
+        # -----------------------------
 
-    # Delete old uploaded datasets
-    for old_file in UPLOAD_DIR.glob("*"):
-        old_file.unlink()
+        VectorStoreManager().reset()
 
-    # Delete old reports
-    REPORT_DIR = Path("reports")
-    REPORT_DIR.mkdir(exist_ok=True)
+        chat_service.memory.clear_all()
 
-    for old_report in REPORT_DIR.glob("*.json"):
-        old_report.unlink()
+        app.state.current_dataset = None
 
-    # -----------------------------
-    # Save New Dataset
-    # -----------------------------
+        for old_file in UPLOAD_DIR.glob("*"):
+            old_file.unlink()
 
-    file_path = UPLOAD_DIR / file.filename
+        for old_report in REPORT_DIR.glob("*.json"):
+            old_report.unlink()
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        for old_file in CLEANED_DIR.glob("*"):
+            old_file.unlink()
 
-    df = pd.read_csv(file_path)
+        # -----------------------------
+        # Save dataset
+        # -----------------------------
 
-    analyzer = DatasetAnalyzer(
-        dataframe=df,
-        dataset_name=file_path.stem
-    )
+        file_path = UPLOAD_DIR / file.filename
 
-    report = analyzer.generate_report()
+        with open(file_path, "wb") as buffer:
 
-    # -----------------------------
-    # Ingest Report
-    # -----------------------------
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
 
-    ingestor = RAGIngestor()
+        app.state.current_dataset = file_path
 
-    ingestor.add_report(
-        json_path=f"reports/{file_path.stem}.json",
-        report_type="profiling"
-    )
+        logging.info(
+            f"Dataset saved at {file_path}"
+        )
 
-    return report
+        # -----------------------------
+        # Analyze dataset
+        # -----------------------------
+
+        df = pd.read_csv(file_path)
+
+        analyzer = DatasetAnalyzer(
+
+            dataframe=df,
+
+            dataset_name=file_path.stem
+
+        )
+
+        report = analyzer.generate_report()
+
+        # -----------------------------
+        # RAG Ingestion
+        # -----------------------------
+
+        RAGIngestor().add_report(
+
+            json_path=f"reports/{file_path.stem}.json",
+
+            report_type="profiling"
+
+        )
+
+        logging.info(
+            "Dataset profiling completed."
+        )
+
+        return report
+
+    except Exception:
+
+        logging.exception(
+            "Dataset upload failed."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to upload dataset."
+
+        )
+
+# ----------------------------------------------------
+# Dataset Cleaning
+# ----------------------------------------------------
+class CleaningRequest(BaseModel):
+
+    columns_to_remove: list[str] = []
+
+@app.post("/clean")
+async def clean_dataset(
+    body: CleaningRequest
+):
+
+    try:
+
+        logging.info(
+            "Starting dataset cleaning."
+        )
+
+        if app.state.current_dataset is None:
+
+            raise HTTPException(
+
+                status_code=400,
+
+                detail="Please upload a dataset first."
+
+            )
+
+        cleaner = DataCleaner(
+
+            dataset_path=app.state.current_dataset,
+
+            columns_to_remove=body.columns_to_remove
+
+        )
+
+        cleaned_dataframe, report = cleaner.clean()
+        
+        # ----------------------------------
+        # Save cleaned dataset
+        # ----------------------------------
+        
+        cleaned_path = CLEANED_DIR / Path(
+            app.state.current_dataset
+        ).name
+        
+        cleaned_dataframe.to_csv(
+            cleaned_path,
+            index=False
+        )
+        
+        app.state.current_dataset = cleaned_path
+        
+        logging.info(
+            f"Cleaned dataset saved at {cleaned_path}"
+        )
+        
+        # ----------------------------------
+        # Save cleaning report
+        # ----------------------------------
+        
+        cleaning_report_path = REPORT_DIR / (
+            f"{cleaned_path.stem}_cleaning.json"
+        )
+        
+        with open(
+            cleaning_report_path,
+            "w",
+            encoding="utf-8"
+        ) as file:
+        
+            json.dump(
+                report,
+                file,
+                indent=4
+            )
+        
+        logging.info(
+            f"Cleaning report saved at {cleaning_report_path}"
+        )
+        
+        # ----------------------------------
+        # Add cleaning report to RAG
+        # ----------------------------------
+        
+        RAGIngestor().add_report(
+        
+            json_path=str(cleaning_report_path),
+        
+            report_type="cleaning"
+        
+        )
+        
+        logging.info(
+            "Cleaning report added to vector store."
+        )
+
+        return {
+
+            "success": True,
+            "message": "Dataset cleaned successfully.",
+            "report": report
+
+        }
+        
+    except HTTPException:
+        
+        raise
+
+    except Exception:
+
+        logging.exception(
+            "Dataset cleaning failed."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to clean dataset."
+
+        )
 
 
 # ----------------------------------------------------
