@@ -1,25 +1,8 @@
 import pandas as pd
-
-from Logger import logging
-
-
-class DataCleaner:
-    """
-    Performs automatic data cleaning.
-
-    Cleaning Steps
-    --------------
-    1. Remove duplicate rows
-    2. Handle missing values
-    3. Remove constant columns
-    4. Fix data types
-    5. Return cleaned dataframe and report
-    """
-
-    import pandas as pd
 from pathlib import Path
-
 from Logger import logging
+
+
 
 
 class DataCleaner:
