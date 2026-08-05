@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Data Cleaning · RAG-Powered ML Workbench{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/clean.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="clean-container">
+
+    <!-- ===========================
+         Header
+    ============================ -->
+
+    <div class="clean-header">
+
+        <div>
+
+            <h1>🧹 Data Cleaning</h1>
+
+            <p>
+                Automatically clean your uploaded dataset by removing duplicates,
+                handling missing values, fixing data types, removing constant
+                columns, and optionally removing selected columns.
+            </p>
+
+        </div>
+
+        <div id="datasetPill" class="dataset-file-pill">
+
+            <span class="dot"></span>
+
+            <span id="datasetPillText">
+
+                Dataset Ready
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- ===========================
+         Body
+    ============================ -->
+
+    <div class="clean-body">
+
+        <!-- Cleaning Options -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h3>Cleaning Options</h3>
+
+                <span>Select columns to remove (optional)</span>
+
+            </div>
+
+            <div class="panel-body">
+
+                <label class="field-label">
+
+                    Remove Columns
+
+                </label>
+
+                <select
+                    id="columnSelect"
+                    class="column-select"
+                    multiple
+                >
+
+                    {% if columns %}
+
+                        {% for column in columns %}
+
+                            <option value="{{ column }}">
+
+                                {{ column }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <option disabled>
+
+                            No dataset uploaded
+
+                        </option>
+
+                    {% endif %}
+
+                </select>
+
+                <small class="field-help">
+
+                    Hold <strong>Ctrl</strong> (Windows/Linux) or
+                    <strong>⌘ Command</strong> (Mac) to select multiple columns.
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div
+            id="cleaningError"
+            class="upload-error hidden"
+        ></div>
+
+        <!-- Buttons -->
+
+        <div class="action-bar">
+
+            <button
+                id="cleanBtn"
+                type="button"
+                class="primary-btn"
+            >
+
+                <span id="cleanBtnText">
+
+                    Clean Dataset
+
+                </span>
+
+            </button>
+
+            <button
+                id="cleanAgainBtn"
+                type="button"
+                class="secondary-btn hidden"
+            >
+
+                Clean Again
+
+            </button>
+
+        </div>
+
+        <!-- ===========================
+             Cleaning Report
+        ============================ -->
+
+        <div
+            id="resultsSection"
+            class="report-section hidden"
+        >
+
+            <div
+                id="summaryGrid"
+                class="summary-grid"
+            ></div>
+
+            <!-- Shape -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>Dataset Shape</h3>
+
+                </div>
+
+                <div
+                    id="shapeCompare"
+                    class="shape-compare"
+                ></div>
+
+            </div>
+
+            <!-- Missing -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>Missing Values Handled</h3>
+
+                    <span id="missingHandledSubtitle"></span>
+
+                </div>
+
+                <div
+                    id="missingHandledEmpty"
+                    class="empty-state hidden"
+                >
+
+                    No missing values were handled.
+
+                </div>
+
+                <div
+                    id="missingHandledScroll"
+                    class="panel-scroll hidden"
+                >
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Column</th>
+
+                                <th>Count</th>
+
+                                <th>Method</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="missingHandledBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- Removed Columns -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>Removed Columns</h3>
+
+                </div>
+
+                <div class="quality-checks">
+
+                    <div class="quality-row">
+
+                        <div class="quality-label">
+
+                            Constant Columns
+
+                        </div>
+
+                        <div
+                            id="constantRemoved"
+                            class="quality-value"
+                        ></div>
+
+                    </div>
+
+                    <div class="quality-row">
+
+                        <div class="quality-label">
+
+                            User Selected Columns
+
+                        </div>
+
+                        <div
+                            id="userRemoved"
+                            class="quality-value"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Datatype Changes -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h3>Data Type Changes</h3>
+
+                    <span id="datatypeSubtitle"></span>
+
+                </div>
+
+                <div
+                    id="datatypeEmpty"
+                    class="empty-state hidden"
+                >
+
+                    No datatype changes were made.
+
+                </div>
+
+                <div
+                    id="datatypeScroll"
+                    class="panel-scroll hidden"
+                >
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Column</th>
+
+                                <th>Before</th>
+
+                                <th>After</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="datatypeBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='js/clean.js') }}"></script>
+{% endblock %}

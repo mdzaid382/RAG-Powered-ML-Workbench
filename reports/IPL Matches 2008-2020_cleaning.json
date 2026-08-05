@@ -1,0 +1,33 @@
+{
+    "dataset_name": "IPL Matches 2008-2020",
+    "duplicates_removed": 0,
+    "missing_values_handled": {
+        "result_margin": {
+            "count": 17,
+            "method": "median"
+        },
+        "player_of_match": {
+            "count": 4,
+            "method": "mode"
+        },
+        "winner": {
+            "count": 4,
+            "method": "mode"
+        },
+        "result": {
+            "count": 4,
+            "method": "mode"
+        },
+        "eliminator": {
+            "count": 4,
+            "method": "mode"
+        }
+    },
+    "constant_columns_removed": [],
+    "user_removed_columns": [],
+    "datatype_changes": {},
+    "rows_before": 816,
+    "rows_after": 816,
+    "columns_before": 14,
+    "columns_after": 14
+}

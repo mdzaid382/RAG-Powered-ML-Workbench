@@ -1,0 +1,670 @@
+/* ==========================================================
+   DATA CLEANING
+========================================================== */
+
+.clean-container{
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 70px);
+}
+
+/* ==========================================================
+   Header
+========================================================== */
+
+.clean-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+
+    padding:22px 30px;
+    margin-bottom:20px;
+
+    background:#fff;
+    border:1px solid #eef1f6;
+    border-radius:14px;
+
+    box-shadow:0 1px 2px rgba(15,23,42,.04),
+               0 8px 24px rgba(15,23,42,.06);
+}
+
+.clean-header h1{
+    margin:0;
+    font-size:24px;
+    color:#0f172a;
+}
+
+.clean-header p{
+    margin-top:6px;
+    max-width:620px;
+    line-height:1.5;
+    font-size:14px;
+    color:#64748b;
+}
+
+/* ==========================================================
+   Dataset pill
+========================================================== */
+
+.dataset-file-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:8px 14px;
+
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:999px;
+
+    font-size:13px;
+    font-weight:600;
+    color:#1e293b;
+}
+
+.dataset-file-pill .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+}
+
+/* ==========================================================
+   Body
+========================================================== */
+
+.clean-body{
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    padding-right:4px;
+}
+
+.clean-body::-webkit-scrollbar{
+    width:8px;
+}
+
+.clean-body::-webkit-scrollbar-thumb{
+    background:#dbe3ee;
+    border-radius:8px;
+}
+
+/* ==========================================================
+   Panels
+========================================================== */
+
+.panel{
+
+    background:#fff;
+
+    border:1px solid #eef1f6;
+    border-radius:14px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 1px 2px rgba(15,23,42,.04),
+        0 8px 24px rgba(15,23,42,.06);
+
+}
+
+.panel-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:16px 22px;
+
+    border-bottom:1px solid #eef1f6;
+
+}
+
+.panel-header h3{
+
+    margin:0;
+
+    font-size:15px;
+    color:#0f172a;
+
+}
+
+.panel-header span{
+
+    font-size:12px;
+    color:#94a3b8;
+
+}
+
+.panel-body{
+
+    padding:22px;
+
+}
+
+/* ==========================================================
+   Form
+========================================================== */
+
+.field-label{
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:13px;
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+.field-help{
+
+    display:block;
+
+    margin-top:10px;
+
+    color:#64748b;
+    font-size:12px;
+
+}
+
+/* ==========================================================
+   Column Select
+========================================================== */
+
+.column-select{
+
+    width:100%;
+    min-height:220px;
+
+    padding:12px;
+
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    font-size:14px;
+    color:#0f172a;
+
+    outline:none;
+
+    transition:.2s;
+
+}
+
+.column-select:focus{
+
+    border-color:#2563eb;
+    background:#fff;
+
+}
+
+.column-select option{
+
+    padding:8px 12px;
+
+}
+
+.column-select option:checked{
+
+    background:#2563eb;
+    color:#fff;
+
+}
+
+/* ==========================================================
+   Buttons
+========================================================== */
+
+.action-bar{
+
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+
+}
+
+.primary-btn{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    padding:12px 22px;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:#fff;
+
+    font-size:14px;
+    font-weight:600;
+
+    transition:.15s;
+
+}
+
+.primary-btn:hover{
+
+    transform:translateY(-1px);
+
+}
+
+.primary-btn:disabled{
+
+    opacity:.6;
+    cursor:not-allowed;
+
+}
+
+.secondary-btn{
+
+    padding:12px 18px;
+
+    border-radius:10px;
+    border:1px solid #dbeafe;
+
+    background:#fff;
+
+    color:#2563eb;
+
+    cursor:pointer;
+
+    font-size:14px;
+    font-weight:600;
+
+}
+
+.secondary-btn:hover{
+
+    background:#eff6ff;
+
+}
+
+/* ==========================================================
+   Error
+========================================================== */
+
+.upload-error{
+
+    color:#b91c1c;
+
+    background:#fef2f2;
+
+    border:1px solid #fecaca;
+
+    padding:12px 16px;
+
+    border-radius:8px;
+
+    font-size:13px;
+
+}
+
+/* ==========================================================
+   Results
+========================================================== */
+
+.report-section{
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+
+}
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+    gap:16px;
+
+}
+
+.stat-card{
+
+    background:#fff;
+
+    border:1px solid #eef1f6;
+    border-radius:12px;
+
+    padding:18px;
+
+}
+
+.stat-label{
+
+    font-size:12px;
+
+    color:#94a3b8;
+
+    text-transform:uppercase;
+
+    font-weight:600;
+
+}
+
+.stat-value{
+
+    margin-top:8px;
+
+    font-size:28px;
+    font-weight:700;
+
+}
+
+.stat-card.ok .stat-value{
+
+    color:#16a34a;
+
+}
+
+.stat-card.warn .stat-value{
+
+    color:#d97706;
+
+}
+
+/* ==========================================================
+   Shape
+========================================================== */
+
+.shape-compare{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+    padding:22px;
+
+}
+
+.shape-item{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+.shape-label{
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    color:#94a3b8;
+
+}
+
+.shape-track{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+}
+
+.shape-value{
+
+    font-size:20px;
+    font-weight:700;
+
+}
+
+.shape-arrow{
+
+    color:#94a3b8;
+
+}
+
+.shape-delta{
+
+    padding:3px 8px;
+
+    border-radius:6px;
+
+    background:#f0fdf4;
+
+    color:#166534;
+
+    font-size:12px;
+    font-weight:600;
+
+}
+
+.shape-delta.neutral{
+
+    background:#f1f5f9;
+
+    color:#64748b;
+
+}
+
+/* ==========================================================
+   Tables
+========================================================== */
+
+.panel-scroll{
+
+    max-height:350px;
+
+    overflow:auto;
+
+}
+
+.data-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.data-table thead th{
+
+    position:sticky;
+    top:0;
+
+    background:#f8fafc;
+
+    padding:12px 18px;
+
+    text-align:left;
+
+    font-size:13px;
+
+    color:#475569;
+
+}
+
+.data-table tbody td{
+
+    padding:12px 18px;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.data-table tbody tr:hover{
+
+    background:#f8fafc;
+
+}
+
+.dtype-badge{
+
+    display:inline-block;
+
+    padding:3px 8px;
+
+    border-radius:6px;
+
+    background:#eef2f7;
+
+    border:1px solid #dbe3ee;
+
+    font-size:12px;
+
+}
+
+/* ==========================================================
+   Removed Columns
+========================================================== */
+
+.quality-checks{
+
+    padding:22px;
+
+}
+
+.quality-row{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.quality-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.quality-label{
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+.quality-value{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    justify-content:flex-end;
+
+    gap:8px;
+
+}
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:5px 10px;
+
+    border-radius:999px;
+
+    font-size:12px;
+    font-weight:600;
+
+}
+
+.badge-danger{
+
+    background:#fef2f2;
+
+    color:#b91c1c;
+
+}
+
+.badge-info{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+}
+
+.badge-empty{
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+/* ==========================================================
+   Empty state
+========================================================== */
+
+.empty-state{
+
+    padding:24px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+/* ==========================================================
+   Utility
+========================================================== */
+
+.hidden{
+
+    display:none !important;
+
+}
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media (max-width:768px){
+
+    .clean-header{
+
+        flex-direction:column;
+        align-items:flex-start;
+
+    }
+
+    .action-bar{
+
+        flex-direction:column;
+
+    }
+
+    .primary-btn,
+    .secondary-btn{
+
+        width:100%;
+        justify-content:center;
+
+    }
+
+    .quality-row{
+
+        flex-direction:column;
+        gap:10px;
+
+    }
+
+}
