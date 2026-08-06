@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Feature Engineering · RAG-Powered ML Workbench{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/feature.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="feature-container">
+
+    <!-- ===========================
+         Header
+    ============================ -->
+
+    <div class="feature-header">
+
+        <div>
+            <h1>⚙️ Feature Engineering</h1>
+            <p>
+                Encode the target, encode categorical features, scale numeric
+                columns, and drop highly correlated features before training.
+            </p>
+        </div>
+
+        <div id="datasetPill" class="feature-file-pill {% if not columns %}empty{% endif %}">
+            <span class="dot"></span>
+            <span id="datasetPillText">{% if columns %}Dataset ready{% else %}No dataset loaded{% endif %}</span>
+        </div>
+
+    </div>
+
+    <!-- ===========================
+         Body
+    ============================ -->
+
+    <div class="feature-body">
+
+        {% if not columns %}
+
+        <div class="panel no-dataset-panel">
+            <div class="panel-body">
+                <div class="no-dataset-state">
+                    <span class="no-dataset-icon">📄</span>
+                    <h2>No dataset loaded yet</h2>
+                    <p>Upload a dataset first, then come back here to configure feature engineering.</p>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- Configuration panel -->
+
+        <div id="configPanel" class="panel config-panel">
+
+            <div class="panel-header">
+                <h3>Configuration</h3>
+                <span>Choose how features are prepared</span>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="config-grid">
+
+                    <div class="field">
+                        <label for="targetColumnSelect">Target column</label>
+                        <select id="targetColumnSelect">
+                            {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="field-hint">The column the model will predict</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="encodingSelect">Categorical encoding</label>
+                        <select id="encodingSelect">
+                            <option value="none" selected>None</option>
+                            <option value="label">Label encoding</option>
+                            <option value="onehot">One-hot encoding</option>
+                        </select>
+                        <span class="field-hint">How text columns are converted to numbers</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="scalingSelect">Scaling</label>
+                        <select id="scalingSelect">
+                            <option value="none" selected>None</option>
+                            <option value="standard">Standard scaler</option>
+                            <option value="minmax">Min-max scaler</option>
+                        </select>
+                        <span class="field-hint">How numeric columns are rescaled</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="correlationSlider">Correlation threshold</label>
+                        <div class="slider-row">
+                            <input id="correlationSlider" type="range" min="0.5" max="1" step="0.01" value="0.90">
+                            <span id="correlationValue" class="slider-value">0.90</span>
+                        </div>
+                        <span class="field-hint">Drop features correlated above this value</span>
+                    </div>
+
+                </div>
+
+                <div class="config-actions">
+                    <button id="runBtn" type="button" class="run-btn">
+                        <span id="runBtnText">Run feature engineering</span>
+                    </button>
+                    <button id="runAgainBtn" type="button" class="run-again-btn hidden">Run again</button>
+                </div>
+
+                <div id="featureError" class="feature-error hidden"></div>
+
+            </div>
+
+        </div>
+
+        <!-- Results -->
+
+        <div id="resultsSection" class="results-section hidden">
+
+            <div class="summary-grid" id="summaryGrid"></div>
+
+            <!-- Shape -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Column count</h3>
+                    <span>Before vs. after feature engineering</span>
+                </div>
+                <div class="panel-body">
+                    <div id="shapeCompare" class="shape-compare"></div>
+                </div>
+            </div>
+
+            <!-- Settings used -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Settings used</h3>
+                    <span>Applied for this run</span>
+                </div>
+                <div class="panel-body">
+                    <div id="settingsUsed" class="settings-used"></div>
+                </div>
+            </div>
+
+            <!-- Encoded columns -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Encoded columns</h3>
+                    <span>Categorical columns transformed</span>
+                </div>
+                <div class="panel-body">
+                    <div id="encodedColumns" class="badge-cluster"></div>
+                </div>
+            </div>
+
+            <!-- Scaled columns -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Scaled columns</h3>
+                    <span>Numeric columns rescaled</span>
+                </div>
+                <div class="panel-body">
+                    <div id="scaledColumns" class="badge-cluster"></div>
+                </div>
+            </div>
+
+            <!-- Correlated columns removed -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Correlated columns removed</h3>
+                    <span id="correlatedSubtitle"></span>
+                </div>
+                <div class="panel-body">
+                    <div id="correlatedRemoved" class="badge-cluster"></div>
+                </div>
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='js/feature.js') }}"></script>
+{% endblock %}

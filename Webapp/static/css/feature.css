@@ -1,0 +1,522 @@
+/* ==========================================================
+   FEATURE ENGINEERING
+   Same token system as dataset.css / cleaning.css:
+   ink #0f172a · muted #64748b · line #e2e8f0
+   accent #2563eb · accent-2 #06b6d4 · ok #22c55e · warn #f59e0b
+========================================================== */
+
+.feature-container{
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 70px);
+}
+
+/* ==========================================================
+   Header
+========================================================== */
+
+.feature-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 30px;
+    background:white;
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    margin-bottom:20px;
+    border:1px solid #eef1f6;
+    flex-wrap:wrap;
+    gap:14px;
+}
+
+.feature-header h1{
+    margin:0;
+    font-size:24px;
+    letter-spacing:-0.01em;
+    color:#0f172a;
+}
+
+.feature-header p{
+    margin-top:6px;
+    color:#64748b;
+    font-size:14px;
+    max-width:560px;
+    line-height:1.5;
+}
+
+.feature-file-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+    font-size:13px;
+    color:#1e293b;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:8px 14px;
+    border-radius:999px;
+}
+
+.feature-file-pill .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    flex-shrink:0;
+}
+
+.feature-file-pill.empty .dot{
+    background:#cbd5e1;
+}
+
+/* ==========================================================
+   Body / scroll area
+========================================================== */
+
+.feature-body{
+    flex:1;
+    overflow-y:auto;
+    padding-right:4px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.feature-body::-webkit-scrollbar{
+    width:8px;
+}
+.feature-body::-webkit-scrollbar-thumb{
+    background:#dbe3ee;
+    border-radius:8px;
+}
+
+/* ==========================================================
+   No dataset state
+========================================================== */
+
+.no-dataset-panel .panel-body{
+    padding:60px 30px;
+}
+
+.no-dataset-state{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:6px;
+}
+
+.no-dataset-icon{
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.no-dataset-state h2{
+    margin:0;
+    font-size:18px;
+    color:#0f172a;
+}
+
+.no-dataset-state p{
+    color:#64748b;
+    font-size:14px;
+    max-width:360px;
+}
+
+/* ==========================================================
+   Panels (shared shell)
+========================================================== */
+
+.panel{
+    background:white;
+    border:1px solid #eef1f6;
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:16px 22px;
+    border-bottom:1px solid #eef1f6;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.panel-header h3{
+    margin:0;
+    font-size:15px;
+    color:#0f172a;
+}
+
+.panel-header span{
+    font-size:12.5px;
+    color:#94a3b8;
+}
+
+.panel-body{
+    padding:20px 22px;
+}
+
+/* ==========================================================
+   Configuration panel
+========================================================== */
+
+.config-panel{
+    flex-shrink:0;
+}
+
+.config-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.field label{
+    font-size:13px;
+    font-weight:600;
+    color:#0f172a;
+}
+
+.field select{
+    appearance:none;
+    -webkit-appearance:none;
+    border:1px solid #e2e8f0;
+    background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.6' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E") no-repeat right 14px center;
+    border-radius:10px;
+    padding:10px 36px 10px 14px;
+    font-size:14px;
+    color:#0f172a;
+    cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease;
+}
+
+.field select:hover{
+    border-color:#cbd5e1;
+}
+
+.field select:focus{
+    outline:none;
+    border-color:#2563eb;
+    background-color:white;
+}
+
+.field-hint{
+    font-size:12px;
+    color:#94a3b8;
+}
+
+.slider-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.slider-row input[type="range"]{
+    flex:1;
+    appearance:none;
+    -webkit-appearance:none;
+    height:6px;
+    border-radius:4px;
+    background:linear-gradient(90deg,#2563eb,#06b6d4);
+    outline:none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb{
+    appearance:none;
+    -webkit-appearance:none;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:white;
+    border:2px solid #2563eb;
+    cursor:pointer;
+    box-shadow:0 1px 3px rgba(15,23,42,.2);
+}
+
+.slider-row input[type="range"]::-moz-range-thumb{
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:white;
+    border:2px solid #2563eb;
+    cursor:pointer;
+    box-shadow:0 1px 3px rgba(15,23,42,.2);
+}
+
+.slider-value{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:13px;
+    font-weight:700;
+    color:#0f172a;
+    width:40px;
+    text-align:right;
+    flex-shrink:0;
+}
+
+.config-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:24px;
+}
+
+.run-btn{
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 24px;
+    cursor:pointer;
+    box-shadow:0 10px 24px rgba(37,99,235,.22);
+    transition:transform .1s ease, opacity .15s ease;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.run-btn:hover{
+    transform:translateY(-1px);
+}
+
+.run-btn:disabled{
+    opacity:.65;
+    cursor:default;
+    transform:none;
+}
+
+.run-again-btn{
+    background:white;
+    color:#2563eb;
+    border:1px solid #dbeafe;
+    border-radius:10px;
+    font-weight:600;
+    font-size:13.5px;
+    padding:10px 16px;
+    cursor:pointer;
+    transition:background .15s ease;
+}
+
+.run-again-btn:hover{
+    background:#eff6ff;
+}
+
+.feature-error{
+    margin-top:14px;
+    color:#b91c1c;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    padding:10px 16px;
+    border-radius:8px;
+    font-size:13.5px;
+}
+
+.btn-spinner{
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:white;
+    animation:spin .8s linear infinite;
+    flex-shrink:0;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+/* ==========================================================
+   Results
+========================================================== */
+
+.results-section{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+}
+
+.stat-card{
+    background:white;
+    border:1px solid #eef1f6;
+    border-radius:12px;
+    padding:18px 20px;
+    box-shadow:0 1px 2px rgba(15,23,42,.04);
+}
+
+.stat-card .stat-label{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:#94a3b8;
+    margin-bottom:8px;
+}
+
+.stat-card .stat-value{
+    font-size:26px;
+    font-weight:700;
+    color:#0f172a;
+    letter-spacing:-0.01em;
+}
+
+.stat-card.ok .stat-value{
+    color:#166534;
+}
+
+.stat-card.warn .stat-value{
+    color:#b45309;
+}
+
+/* Shape comparison */
+
+.shape-compare{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px;
+}
+
+.shape-item{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.shape-label{
+    font-size:12.5px;
+    font-weight:600;
+    color:#94a3b8;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+}
+
+.shape-track{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+}
+
+.shape-value{
+    font-size:20px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.shape-arrow{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.shape-delta{
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    font-size:12.5px;
+    font-weight:600;
+    padding:2px 8px;
+    border-radius:6px;
+    background:#f0fdf4;
+    color:#166534;
+}
+
+.shape-delta.neutral{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+/* Settings used */
+
+.settings-used{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.setting-pill{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:999px;
+    padding:7px 14px;
+    font-size:13px;
+}
+
+.setting-pill .setting-key{
+    color:#64748b;
+    font-weight:500;
+}
+
+.setting-pill .setting-val{
+    color:#0f172a;
+    font-weight:700;
+    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+}
+
+/* Badge clusters */
+
+.badge-cluster{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.badge-cluster .badge-empty{
+    color:#166534;
+    font-size:13px;
+    font-weight:600;
+}
+
+.badge{
+    font-size:12px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+}
+
+.badge-danger{
+    background:#fef2f2;
+    color:#b91c1c;
+    border:1px solid #fecaca;
+}
+
+.badge-info{
+    background:#eff6ff;
+    color:#1d4ed8;
+    border:1px solid #dbeafe;
+}
+
+.badge-accent{
+    background:#ecfeff;
+    color:#0e7490;
+    border:1px solid #cffafe;
+}
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media(max-width:768px){
+
+    .feature-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .config-actions{
+        flex-wrap:wrap;
+    }
+}
