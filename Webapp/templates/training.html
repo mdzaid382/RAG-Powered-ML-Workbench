@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Model Training · RAG-Powered ML Workbench{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/training.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="training-container">
+
+    <!-- ===========================
+         Header
+    ============================ -->
+
+    <div class="training-header">
+
+        <div>
+            <h1>🚀 Model Training</h1>
+            <p>
+                Pick a target column, choose a problem type and models, then
+                train and compare them side by side.
+            </p>
+        </div>
+
+        <div id="datasetPill" class="training-file-pill {% if not columns %}empty{% endif %}">
+            <span class="dot"></span>
+            <span id="datasetPillText">{% if columns %}Dataset ready{% else %}No dataset loaded{% endif %}</span>
+        </div>
+
+    </div>
+
+    <!-- ===========================
+         Body
+    ============================ -->
+
+    <div class="training-body">
+
+        {% if not columns %}
+
+        <div class="panel no-dataset-panel">
+            <div class="panel-body">
+                <div class="no-dataset-state">
+                    <span class="no-dataset-icon">📄</span>
+                    <h2>No dataset loaded yet</h2>
+                    <p>Upload a dataset first, then come back here to train models.</p>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- Configuration panel -->
+
+        <div id="configPanel" class="panel config-panel">
+
+            <div class="panel-header">
+                <h3>Configuration</h3>
+                <span>Choose target, problem type, and models</span>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="config-grid">
+
+                    <div class="field">
+                        <label for="targetColumnSelect">Target column</label>
+                        <select id="targetColumnSelect">
+                            {% for column in columns %}
+                            <option value="{{ column }}">{{ column }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="field-hint">The column the models will predict</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="problemTypeSelect">Problem type</label>
+                        <select id="problemTypeSelect">
+                            <option value="classification" selected>Classification</option>
+                            <option value="regression">Regression</option>
+                        </select>
+                        <span class="field-hint">Determines which models and metrics apply</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="testSizeSlider">Test size</label>
+                        <div class="slider-row">
+                            <input id="testSizeSlider" type="range" min="0.1" max="0.5" step="0.05" value="0.2">
+                            <span id="testSizeValue" class="slider-value">0.20</span>
+                        </div>
+                        <span class="field-hint">Share of data held out for evaluation</span>
+                    </div>
+
+                    <div class="field">
+                        <label for="randomStateInput">Random state</label>
+                        <input id="randomStateInput" type="number" value="42" step="1">
+                        <span class="field-hint">Seed for reproducible splits</span>
+                    </div>
+
+                </div>
+
+                <div class="model-select-block">
+
+                    <div class="model-select-header">
+                        <span class="model-select-title">Models to train</span>
+                        <div class="model-select-actions">
+                            <button id="selectAllModelsBtn" type="button" class="text-btn">Select all</button>
+                            <button id="clearAllModelsBtn" type="button" class="text-btn">Clear</button>
+                        </div>
+                    </div>
+
+                    <div id="modelChecklist" class="model-checklist"></div>
+
+                </div>
+
+                <div class="config-actions">
+                    <button id="trainBtn" type="button" class="train-btn">
+                        <span id="trainBtnText">Train models</span>
+                    </button>
+                    <button id="trainAgainBtn" type="button" class="train-again-btn hidden">Train again</button>
+                </div>
+
+                <div id="trainingError" class="training-error hidden"></div>
+
+            </div>
+
+        </div>
+
+        <!-- Results -->
+
+        <div id="resultsSection" class="results-section hidden">
+
+            <div class="summary-grid" id="summaryGrid"></div>
+
+            <!-- Split -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Train / test split</h3>
+                    <span id="splitSubtitle"></span>
+                </div>
+                <div class="panel-body">
+                    <div id="splitBar" class="split-bar"></div>
+                    <div id="splitLegend" class="split-legend"></div>
+                </div>
+            </div>
+
+            <!-- Model comparison -->
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Model comparison</h3>
+                    <span id="modelsSubtitle"></span>
+                </div>
+                <div class="panel-scroll">
+                    <table class="data-table" id="modelsTable">
+                        <thead id="modelsTableHead"></thead>
+                        <tbody id="modelsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', path='js/training.js') }}"></script>
+{% endblock %}
