@@ -261,6 +261,9 @@ async def upload_dataset(
         for old_file in FEATURE_DIR.glob("*"):
             old_file.unlink()
 
+        for old_file in TRAINED_MODEL_DIR.glob("*"):  
+            old_file.unlink()
+
         # -----------------------------
         # Save dataset
         # -----------------------------

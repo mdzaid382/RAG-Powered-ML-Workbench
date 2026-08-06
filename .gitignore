@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+uploads/
+reports/
+cleaned_datasets/
+feature_engineered_datasets/
+trained_models/
+.vscode/

@@ -103,51 +103,45 @@ class DataCleaner:
             for column in numeric_columns:
 
                 missing = self.df[column].isna().sum()
-
+            
                 if missing > 0:
-
+            
                     median = self.df[column].median()
-
-                    self.df[column].fillna(
-                        median,
-                        inplace=True
-                    )
-
+            
+                    self.df[column] = self.df[column].fillna(median)   
+            
                     self.report["missing_values_handled"][column] = {
-
+            
                         "count": int(missing),
-
+            
                         "method": "median"
-
+            
                     }
 
             for column in categorical_columns:
-
+            
                 missing = self.df[column].isna().sum()
-
+            
                 if missing > 0:
-
+            
                     mode = self.df[column].mode()
-
+            
                     if not mode.empty:
-
+            
                         value = mode.iloc[0]
-
+            
                     else:
-
+            
                         value = "Unknown"
-
-                    self.df[column].fillna(
-                        value,
-                        inplace=True
-                    )
-
+            
+                    self.df[column] = self.df[column].fillna(value)    # was: self.df[column].fillna(value, inplace=True)
+            
                     self.report["missing_values_handled"][column] = {
-
+            
                         "count": int(missing),
-
+            
                         "method": "mode"
-
+            
                     }
 
             logging.info(
