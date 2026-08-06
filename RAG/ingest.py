@@ -1,7 +1,6 @@
 import json
 
 from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from RAG.vectorstore import VectorStoreManager
 from Logger import logging
@@ -142,50 +141,3 @@ class RAGIngestor:
             )
             raise
 
-
-    # Add User PDF
-
-    def add_pdf(
-        self,
-        documents
-    ):
-
-        try:
-            logging.info(
-                "Chunking uploaded PDF."
-            )
-
-            splitter = RecursiveCharacterTextSplitter(
-                chunk_size=1000,
-                chunk_overlap=200
-            )
-
-            chunks = splitter.split_documents(
-                documents
-            )
-
-            logging.info(
-                f"Generated {len(chunks)} chunks."
-            )
-
-            vectorstore = self.vector_manager.load()
- 
-            vectorstore.add_documents(
-                chunks
-            )
-
-            self.vector_manager.save(
-                self.vectorstore
-            )
-
-            logging.info(
-                "PDF added to vector store successfully."
-            )
-
-            return len(chunks)
-
-        except Exception:
-            logging.exception(
-                "Failed to ingest uploaded PDF."
-            )
-            raise

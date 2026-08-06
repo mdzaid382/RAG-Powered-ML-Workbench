@@ -37,18 +37,39 @@
 
     <div class="dataset-body">
 
-        <!-- Upload zone -->
+        <!-- Upload zone + demo datasets, side by side -->
 
-        <div id="uploadZone" class="upload-zone">
+        <div id="uploadRow" class="upload-row">
 
-            <div id="uploadZoneInner">
-                <div class="upload-icon">⬆️</div>
-                <h2>Drop a dataset here</h2>
-                <p>or click to browse — CSV only</p>
-                <button id="browseBtn" type="button" class="upload-browse-btn">Browse files</button>
+            <div id="uploadZone" class="upload-zone">
+
+                <div id="uploadZoneInner">
+                    <div class="upload-icon">⬆️</div>
+                    <h2>Drop a dataset here</h2>
+                    <p>or click to browse — CSV only</p>
+                    <button id="browseBtn" type="button" class="upload-browse-btn">Browse files</button>
+                </div>
+
+                <input id="fileInput" type="file" accept=".csv" class="hidden">
+
             </div>
 
-            <input id="fileInput" type="file" accept=".csv" class="hidden">
+            {% if demo_datasets %}
+            <div id="demoSection" class="demo-section">
+
+                <div class="demo-divider"><span>or try a demo dataset</span></div>
+
+                <div class="demo-grid">
+                    {% for demo in demo_datasets %}
+                    <button type="button" class="demo-card" data-demo-id="{{ demo.id }}">
+                        <div class="demo-card-name">{{ demo.name }}</div>
+                        <div class="demo-card-desc">{{ demo.description }}</div>
+                    </button>
+                    {% endfor %}
+                </div>
+
+            </div>
+            {% endif %}
 
         </div>
 

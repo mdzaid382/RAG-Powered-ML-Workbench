@@ -8,6 +8,9 @@ const fileInput = document.getElementById("fileInput");
 const browseBtn = document.getElementById("browseBtn");
 const uploadError = document.getElementById("uploadError");
 
+const demoSection = document.getElementById("demoSection");
+const demoCards = document.querySelectorAll(".demo-card");
+
 const reportSection = document.getElementById("reportSection");
 const filenamePill = document.getElementById("reportFilenamePill");
 const reportFilename = document.getElementById("reportFilename");
@@ -97,6 +100,13 @@ uploadZone.addEventListener("drop", function (e) {
 
 resetBtn.addEventListener("click", resetUpload);
 
+demoCards.forEach(function (card) {
+    card.addEventListener("click", function () {
+        if (uploading) return;
+        loadDemoDataset(card.dataset.demoId);
+    });
+});
+
 // ==========================================================
 // File handling
 // ==========================================================
@@ -144,12 +154,43 @@ async function uploadFile(file) {
 
 }
 
+// ==========================================================
+// Demo dataset handling
+// ==========================================================
+
+async function loadDemoDataset(demoId) {
+
+    hideError();
+    setUploading(true);
+
+    try {
+
+        const response = await fetch(`/demo-datasets/${demoId}`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error("Couldn't load that demo dataset. Try again.");
+        }
+
+        const data = await response.json();
+        renderReport(data);
+
+    }
+    catch (error) {
+        setUploading(false);
+        showError(error.message);
+    }
+
+}
+
 function setUploading(isUploading) {
 
     uploading = isUploading;
 
     if (isUploading) {
         uploadZone.classList.add("uploading");
+        if (demoSection) demoSection.classList.add("hidden");
         uploadZoneInner.innerHTML = `
             <div class="spinner"></div>
             <h2>Analyzing your dataset…</h2>
@@ -165,6 +206,7 @@ function setUploading(isUploading) {
 function showError(message) {
     uploadError.textContent = message;
     uploadError.classList.remove("hidden");
+    if (demoSection) demoSection.classList.remove("hidden");
 }
 
 function hideError() {
@@ -179,6 +221,7 @@ function hideError() {
 function renderReport(data) {
 
     uploadZone.classList.add("hidden");
+    if (demoSection) demoSection.classList.add("hidden");
     reportSection.classList.remove("hidden");
 
     reportFilename.textContent = data.dataset_name || "Dataset";
@@ -362,6 +405,7 @@ function resetUpload() {
 
     reportSection.classList.add("hidden");
     uploadZone.classList.remove("hidden");
+    if (demoSection) demoSection.classList.remove("hidden");
     setUploading(false);
     hideError();
     fileInput.value = "";

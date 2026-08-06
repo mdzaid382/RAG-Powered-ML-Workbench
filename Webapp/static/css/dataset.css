@@ -1,8 +1,6 @@
 /* ==========================================================
    DATASET ANALYZER
-   Same token system as assistant.css:
-   ink #0f172a · muted #64748b · line #e2e8f0
-   accent #2563eb · accent-2 #06b6d4 · ok #22c55e · warn #f59e0b
+   Professional recruiter-friendly layout
 ========================================================== */
 
 .dataset-container{
@@ -20,41 +18,41 @@
     justify-content:space-between;
     align-items:center;
     padding:22px 30px;
-    background:white;
-    border-radius:14px;
-    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
-    margin-bottom:20px;
+    background:#ffffff;
     border:1px solid #eef1f6;
+    border-radius:16px;
+    box-shadow:0 2px 10px rgba(15,23,42,.06);
+    margin-bottom:22px;
     flex-wrap:wrap;
-    gap:14px;
+    gap:16px;
 }
 
 .dataset-header h1{
     margin:0;
-    font-size:24px;
-    letter-spacing:-0.01em;
+    font-size:28px;
+    font-weight:700;
     color:#0f172a;
 }
 
 .dataset-header p{
-    margin-top:6px;
+    margin:6px 0 0;
     color:#64748b;
-    font-size:14px;
-    max-width:520px;
-    line-height:1.5;
+    font-size:15px;
+    line-height:1.6;
+    max-width:560px;
 }
 
 .dataset-file-pill{
     display:flex;
     align-items:center;
     gap:10px;
-    font-weight:600;
-    font-size:13px;
-    color:#1e293b;
+    padding:10px 16px;
+    border-radius:999px;
     background:#f8fafc;
     border:1px solid #e2e8f0;
-    padding:8px 14px;
-    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    color:#1e293b;
 }
 
 .dataset-file-pill .dot{
@@ -62,7 +60,6 @@
     height:8px;
     border-radius:50%;
     background:#22c55e;
-    flex-shrink:0;
 }
 
 .dataset-file-pill.empty .dot{
@@ -70,7 +67,7 @@
 }
 
 /* ==========================================================
-   Body / scroll area
+   Body
 ========================================================== */
 
 .dataset-body{
@@ -82,38 +79,56 @@
 .dataset-body::-webkit-scrollbar{
     width:8px;
 }
+
 .dataset-body::-webkit-scrollbar-thumb{
     background:#dbe3ee;
-    border-radius:8px;
+    border-radius:999px;
 }
 
 /* ==========================================================
-   Upload zone
+   Upload + Demo Side by Side
+========================================================== */
+
+.upload-row{
+    display:flex;
+    align-items:stretch;
+    gap:24px;
+    margin-bottom:22px;
+}
+
+/* ==========================================================
+   Upload Zone (LEFT)
 ========================================================== */
 
 .upload-zone{
-    background:white;
+    flex:1;
+    min-width:0;
+
+    background:#ffffff;
     border:2px dashed #cbd5e1;
-    border-radius:16px;
-    padding:60px 30px;
+    border-radius:18px;
+
+    padding:58px 32px;
+
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
     text-align:center;
+
     cursor:pointer;
-    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+
+    transition:.2s ease;
 }
 
 .upload-zone:hover{
     border-color:#2563eb;
-    background:#f8fafc;
+    background:#f8fbff;
 }
 
 .upload-zone.dragover{
     border-color:#2563eb;
     background:#eff6ff;
-    transform:scale(1.005);
+    transform:scale(1.01);
 }
 
 .upload-zone.uploading{
@@ -123,73 +138,157 @@
 }
 
 .upload-icon{
-    width:64px;
-    height:64px;
-    border-radius:18px;
+    width:78px;
+    height:78px;
+    border-radius:22px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:26px;
-    margin-bottom:20px;
+
+    margin:0 auto 22px;
+
+    font-size:30px;
+    color:#ffffff;
+
     background:linear-gradient(135deg,#2563eb,#06b6d4);
-    color:white;
-    box-shadow:0 10px 24px rgba(37,99,235,.28);
+
+    box-shadow:0 14px 34px rgba(37,99,235,.28);
 }
 
 .upload-zone h2{
-    margin:0 0 6px;
+    margin:0 0 10px;
+    font-size:32px;
+    font-weight:700;
     color:#0f172a;
-    font-size:19px;
 }
 
 .upload-zone p{
+    margin:0 0 24px;
     color:#64748b;
-    font-size:14px;
-    margin-bottom:20px;
+    font-size:16px;
 }
 
 .upload-browse-btn{
     background:#2563eb;
-    color:white;
+    color:#ffffff;
     border:none;
-    border-radius:10px;
-    font-weight:600;
-    font-size:14px;
-    padding:11px 22px;
+    border-radius:12px;
+    padding:13px 28px;
+    font-size:15px;
+    font-weight:700;
     cursor:pointer;
-    transition:background .15s ease;
+    transition:.15s ease;
 }
 
 .upload-browse-btn:hover{
     background:#1d4ed8;
 }
 
-.upload-hint{
-    margin-top:16px;
-    color:#94a3b8;
-    font-size:12.5px;
+/* ==========================================================
+   Demo Dataset (RIGHT)
+========================================================== */
+
+.demo-section{
+    width:320px;
+    flex-shrink:0;
+
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+
+    padding:22px;
+
+    display:flex;
+    flex-direction:column;
+
+    box-shadow:0 2px 10px rgba(15,23,42,.06);
 }
+
+.demo-divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:22px;
+}
+
+.demo-divider span{
+    font-size:12px;
+    font-weight:700;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.demo-grid{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.demo-card{
+    width:100%;
+
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+
+    padding:22px 18px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.22s ease;
+
+    box-shadow:0 4px 12px rgba(15,23,42,.05);
+}
+
+.demo-card:hover{
+    transform:translateY(-4px);
+    border-color:#2563eb;
+    box-shadow:0 14px 32px rgba(37,99,235,.16);
+}
+
+.demo-card-name{
+    font-size:19px;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:8px;
+}
+
+.demo-card-desc{
+    font-size:13px;
+    color:#64748b;
+    line-height:1.6;
+}
+
+/* ==========================================================
+   Upload Error
+========================================================== */
 
 .upload-error{
-    margin-top:16px;
-    color:#b91c1c;
+    margin-bottom:18px;
+    padding:12px 16px;
+    border-radius:10px;
     background:#fef2f2;
     border:1px solid #fecaca;
-    padding:10px 16px;
-    border-radius:8px;
-    font-size:13.5px;
+    color:#b91c1c;
+    font-size:14px;
 }
 
-/* Spinner shown while uploading/profiling */
+/* ==========================================================
+   Spinner
+========================================================== */
 
 .spinner{
     width:44px;
     height:44px;
-    border-radius:50%;
     border:3px solid #dbeafe;
     border-top-color:#2563eb;
+    border-radius:50%;
     animation:spin .8s linear infinite;
-    margin-bottom:18px;
+    margin:0 auto 18px;
 }
 
 @keyframes spin{
@@ -197,7 +296,7 @@
 }
 
 /* ==========================================================
-   Report section
+   Report Section
 ========================================================== */
 
 .report-section{
@@ -209,26 +308,26 @@
 .report-toolbar{
     display:flex;
     justify-content:flex-end;
-    align-items:center;
 }
 
 .reset-btn{
-    background:white;
+    background:#ffffff;
     color:#2563eb;
     border:1px solid #dbeafe;
     border-radius:10px;
+    padding:10px 16px;
+    font-size:14px;
     font-weight:600;
-    font-size:13.5px;
-    padding:9px 16px;
     cursor:pointer;
-    transition:background .15s ease;
 }
 
 .reset-btn:hover{
     background:#eff6ff;
 }
 
-/* Summary stat cards */
+/* ==========================================================
+   Summary Cards
+========================================================== */
 
 .summary-grid{
     display:grid;
@@ -237,85 +336,87 @@
 }
 
 .stat-card{
-    background:white;
+    background:#ffffff;
     border:1px solid #eef1f6;
-    border-radius:12px;
+    border-radius:14px;
     padding:18px 20px;
-    box-shadow:0 1px 2px rgba(15,23,42,.04);
+    box-shadow:0 2px 8px rgba(15,23,42,.05);
 }
 
-.stat-card .stat-label{
-    font-size:12.5px;
-    font-weight:600;
-    letter-spacing:.03em;
+.stat-label{
+    font-size:12px;
+    font-weight:700;
     text-transform:uppercase;
+    letter-spacing:.04em;
     color:#94a3b8;
     margin-bottom:8px;
 }
 
-.stat-card .stat-value{
-    font-size:26px;
+.stat-value{
+    font-size:28px;
     font-weight:700;
     color:#0f172a;
-    letter-spacing:-0.01em;
 }
 
 .stat-card.warn .stat-value{
     color:#b45309;
 }
 
-/* Panels (columns table, preview table) */
+/* ==========================================================
+   Panels
+========================================================== */
 
 .panel{
-    background:white;
+    background:#ffffff;
     border:1px solid #eef1f6;
-    border-radius:14px;
-    box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.06);
+    border-radius:16px;
     overflow:hidden;
+    box-shadow:0 2px 10px rgba(15,23,42,.05);
 }
 
 .panel-header{
-    padding:16px 22px;
-    border-bottom:1px solid #eef1f6;
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
+    padding:18px 22px;
+    border-bottom:1px solid #eef1f6;
 }
 
 .panel-header h3{
     margin:0;
-    font-size:15px;
+    font-size:16px;
     color:#0f172a;
 }
 
 .panel-header span{
-    font-size:12.5px;
+    font-size:13px;
     color:#94a3b8;
-}
-
-.panel-scroll{
-    overflow-x:auto;
-    max-height:420px;
-    overflow-y:auto;
 }
 
 .panel-body{
     padding:20px 22px;
 }
 
-.empty-state{
-    padding:26px 22px;
-    color:#64748b;
-    font-size:13.5px;
+.panel-scroll{
+    max-height:420px;
+    overflow:auto;
 }
 
-/* Column type segmented bar */
+.empty-state{
+    padding:24px 22px;
+    color:#64748b;
+    font-size:14px;
+}
+
+/* ==========================================================
+   Column Type Bar
+========================================================== */
 
 .type-bar{
     display:flex;
     width:100%;
     height:10px;
-    border-radius:6px;
+    border-radius:999px;
     overflow:hidden;
     background:#eef2f7;
     margin-bottom:16px;
@@ -323,7 +424,6 @@
 
 .type-bar-segment{
     height:100%;
-    transition:width .2s ease;
 }
 
 .type-legend{
@@ -335,7 +435,7 @@
 .type-legend-item{
     display:flex;
     align-items:center;
-    gap:7px;
+    gap:8px;
     font-size:13px;
     color:#475569;
 }
@@ -344,16 +444,16 @@
     width:9px;
     height:9px;
     border-radius:50%;
-    flex-shrink:0;
 }
 
 .type-count{
-    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
-    font-weight:600;
+    font-weight:700;
     color:#0f172a;
 }
 
-/* Data quality checks */
+/* ==========================================================
+   Quality Checks
+========================================================== */
 
 .quality-checks{
     display:flex;
@@ -362,9 +462,8 @@
 
 .quality-row{
     display:flex;
-    align-items:flex-start;
-    gap:18px;
-    padding:16px 22px;
+    gap:20px;
+    padding:18px 22px;
     border-top:1px solid #f1f5f9;
     flex-wrap:wrap;
 }
@@ -374,17 +473,16 @@
 }
 
 .quality-label{
-    flex-shrink:0;
-    width:200px;
+    width:220px;
+    font-size:14px;
     font-weight:600;
-    font-size:13.5px;
     color:#0f172a;
 }
 
 .quality-hint{
-    font-weight:400;
-    color:#94a3b8;
     font-size:12px;
+    color:#94a3b8;
+    font-weight:400;
 }
 
 .quality-value{
@@ -397,16 +495,15 @@
 
 .check-clear{
     color:#166534;
-    font-size:13px;
     font-weight:600;
+    font-size:13px;
 }
 
 .badge{
-    font-size:12px;
-    font-weight:600;
-    padding:4px 10px;
+    padding:5px 10px;
     border-radius:999px;
-    white-space:nowrap;
+    font-size:12px;
+    font-weight:700;
 }
 
 .badge-warn{
@@ -415,7 +512,9 @@
     border:1px solid #fde68a;
 }
 
-/* Recommendations */
+/* ==========================================================
+   Recommendations
+========================================================== */
 
 .recommendations-panel{
     border-color:#dbeafe;
@@ -429,31 +528,32 @@
 
 .recommendation-item{
     display:flex;
-    align-items:flex-start;
     gap:12px;
-    padding:12px 22px;
-    font-size:14px;
+    padding:14px 22px;
     color:#1e293b;
+    font-size:14px;
 }
 
-.recommendation-item .rec-icon{
-    flex-shrink:0;
+.rec-icon{
     width:22px;
     height:22px;
     border-radius:6px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:12px;
-    font-weight:700;
     background:#eff6ff;
     color:#2563eb;
+    font-weight:700;
 }
 
 .recommendation-item.clear .rec-icon{
     background:#f0fdf4;
     color:#16a34a;
 }
+
+/* ==========================================================
+   Tables
+========================================================== */
 
 table.data-table{
     width:100%;
@@ -466,23 +566,17 @@ table.data-table thead th{
     top:0;
     background:#f8fafc;
     text-align:left;
-    padding:11px 22px;
-    font-weight:600;
+    padding:12px 22px;
     color:#475569;
+    font-weight:700;
     border-bottom:1px solid #eef1f6;
     white-space:nowrap;
-    z-index:1;
 }
 
 table.data-table tbody td{
-    padding:11px 22px;
+    padding:12px 22px;
     border-bottom:1px solid #f1f5f9;
-    color:#1e293b;
     white-space:nowrap;
-}
-
-table.data-table tbody tr:last-child td{
-    border-bottom:none;
 }
 
 table.data-table tbody tr:hover{
@@ -490,36 +584,36 @@ table.data-table tbody tr:hover{
 }
 
 .dtype-badge{
-    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
-    font-size:11.5px;
-    font-weight:600;
-    padding:2px 8px;
+    padding:3px 8px;
     border-radius:6px;
     background:#eef2f7;
-    color:#475569;
     border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:700;
+    color:#475569;
 }
 
-/* Missing-value density bar — the signature visual of this page */
+/* ==========================================================
+   Missing Bar
+========================================================== */
 
 .missing-cell{
     display:flex;
     align-items:center;
     gap:10px;
-    min-width:160px;
+    min-width:170px;
 }
 
 .missing-bar-track{
     flex:1;
     height:6px;
-    border-radius:4px;
+    border-radius:999px;
     background:#eef2f7;
     overflow:hidden;
 }
 
 .missing-bar-fill{
     height:100%;
-    border-radius:4px;
     background:linear-gradient(90deg,#2563eb,#06b6d4);
 }
 
@@ -528,17 +622,36 @@ table.data-table tbody tr:hover{
 }
 
 .missing-pct{
-    font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+    width:46px;
+    text-align:right;
     font-size:12px;
     color:#64748b;
-    width:42px;
-    flex-shrink:0;
-    text-align:right;
 }
 
 /* ==========================================================
    Responsive
 ========================================================== */
+
+@media(max-width:1000px){
+
+    .upload-row{
+        flex-direction:column;
+    }
+
+    .demo-section{
+        width:100%;
+    }
+
+    .demo-grid{
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .demo-card{
+        width:260px;
+    }
+}
 
 @media(max-width:768px){
 
@@ -548,10 +661,18 @@ table.data-table tbody tr:hover{
     }
 
     .upload-zone{
-        padding:40px 18px;
+        padding:42px 20px;
+    }
+
+    .upload-zone h2{
+        font-size:26px;
+    }
+
+    .quality-label{
+        width:100%;
     }
 
     .missing-cell{
-        min-width:120px;
+        min-width:130px;
     }
 }

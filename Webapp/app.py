@@ -47,6 +47,12 @@ FEATURE_DIR.mkdir(exist_ok=True)
 TRAINED_MODEL_DIR = Path("trained_models")
 TRAINED_MODEL_DIR.mkdir(exist_ok=True)
 
+# Folder where the demo dataset CSVs actually live on disk.
+# Add a file here for every entry in DEMO_DATASET_FILES below,
+# e.g. Webapp/demo_datasets/titanic.csv
+DEMO_DIR = Path("Webapp/demo_datasets")
+DEMO_DIR.mkdir(exist_ok=True, parents=True)
+
 templates = Jinja2Templates(
     directory="Webapp/templates"
 )
@@ -62,12 +68,30 @@ app.mount(
 # Pages
 # ----------------------------------------------------
 
+DEMO_DATASETS = [
+    {
+        "id": "titanic",
+        "name": "Titanic Dataset",
+        "description": "Passenger survival prediction"
+    }
+]
+
+# Maps a demo id (from DEMO_DATASETS above) to the actual filename
+# stored in DEMO_DIR. Keep this in sync with DEMO_DATASETS.
+DEMO_DATASET_FILES = {
+    "titanic": "titanic.csv"
+}
+
 @app.get("/")
 async def home(request: Request):
 
     return templates.TemplateResponse(
         request=request,
-        name="dataset.html"
+        name="dataset.html",
+        context={
+            "request": request,
+            "demo_datasets": DEMO_DATASETS
+        }
     )
 
 @app.get("/assistant")
@@ -224,7 +248,80 @@ async def feature_engineering(request: Request):
             detail="Failed to load feature engineering page."
 
         )
-    
+
+
+# ----------------------------------------------------
+# Shared helpers: reset workspace + analyze/ingest
+# ----------------------------------------------------
+
+def _reset_workspace():
+    """
+    Clears out everything tied to the previously loaded dataset
+    (vector store, chat memory, uploaded/derived files) so a fresh
+    dataset - uploaded or demo - starts from a clean slate.
+    """
+
+    VectorStoreManager().reset()
+
+    chat_service.memory.clear_all()
+
+    app.state.current_dataset = None
+
+    for old_file in UPLOAD_DIR.glob("*"):
+        old_file.unlink()
+
+    for old_report in REPORT_DIR.glob("*.json"):
+        old_report.unlink()
+
+    for old_file in CLEANED_DIR.glob("*"):
+        old_file.unlink()
+
+    for old_file in FEATURE_DIR.glob("*"):
+        old_file.unlink()
+
+    for old_file in TRAINED_MODEL_DIR.glob("*"):
+        old_file.unlink()
+
+
+def _profile_and_ingest(file_path: Path) -> dict:
+    """
+    Runs profiling on the dataset at file_path, sets it as the
+    current dataset, and ingests the profiling report into the
+    RAG vector store. Used by both the upload and demo-dataset flows.
+    """
+
+    app.state.current_dataset = file_path
+
+    logging.info(
+        f"Dataset set at {file_path}"
+    )
+
+    df = pd.read_csv(file_path)
+
+    analyzer = DatasetAnalyzer(
+
+        dataframe=df,
+
+        dataset_name=file_path.stem
+
+    )
+
+    report = analyzer.generate_report()
+
+    RAGIngestor().add_report(
+
+        json_path=f"reports/{file_path.stem}.json",
+
+        report_type="profiling"
+
+    )
+
+    logging.info(
+        "Dataset profiling completed."
+    )
+
+    return report
+
 
 # ----------------------------------------------------
 # Dataset Upload
@@ -243,26 +340,7 @@ async def upload_dataset(
         # Reset previous project
         # -----------------------------
 
-        VectorStoreManager().reset()
-
-        chat_service.memory.clear_all()
-
-        app.state.current_dataset = None
-
-        for old_file in UPLOAD_DIR.glob("*"):
-            old_file.unlink()
-
-        for old_report in REPORT_DIR.glob("*.json"):
-            old_report.unlink()
-
-        for old_file in CLEANED_DIR.glob("*"):
-            old_file.unlink()
-
-        for old_file in FEATURE_DIR.glob("*"):
-            old_file.unlink()
-
-        for old_file in TRAINED_MODEL_DIR.glob("*"):  
-            old_file.unlink()
+        _reset_workspace()
 
         # -----------------------------
         # Save dataset
@@ -277,43 +355,15 @@ async def upload_dataset(
                 buffer
             )
 
-        app.state.current_dataset = file_path
-
         logging.info(
             f"Dataset saved at {file_path}"
         )
 
         # -----------------------------
-        # Analyze dataset
+        # Analyze + ingest
         # -----------------------------
 
-        df = pd.read_csv(file_path)
-
-        analyzer = DatasetAnalyzer(
-
-            dataframe=df,
-
-            dataset_name=file_path.stem
-
-        )
-
-        report = analyzer.generate_report()
-
-        # -----------------------------
-        # RAG Ingestion
-        # -----------------------------
-
-        RAGIngestor().add_report(
-
-            json_path=f"reports/{file_path.stem}.json",
-
-            report_type="profiling"
-
-        )
-
-        logging.info(
-            "Dataset profiling completed."
-        )
+        report = _profile_and_ingest(file_path)
 
         return report
 
@@ -330,6 +380,100 @@ async def upload_dataset(
             detail="Failed to upload dataset."
 
         )
+
+
+# ----------------------------------------------------
+# Demo Dataset
+# ----------------------------------------------------
+
+@app.post("/demo-datasets/{demo_id}")
+async def load_demo_dataset(
+    demo_id: str
+):
+
+    try:
+
+        logging.info(
+            f"Loading demo dataset '{demo_id}'."
+        )
+
+        demo_filename = DEMO_DATASET_FILES.get(demo_id)
+
+        if demo_filename is None:
+
+            raise HTTPException(
+
+                status_code=404,
+
+                detail="Unknown demo dataset."
+
+            )
+
+        source_path = DEMO_DIR / demo_filename
+
+        if not source_path.exists():
+
+            logging.error(
+                f"Demo dataset file missing at {source_path}"
+            )
+
+            raise HTTPException(
+
+                status_code=404,
+
+                detail="Demo dataset file is not available."
+
+            )
+
+        # -----------------------------
+        # Reset previous project
+        # -----------------------------
+
+        _reset_workspace()
+
+        # -----------------------------
+        # Copy demo dataset into the
+        # uploads dir so it's treated
+        # exactly like a user upload
+        # -----------------------------
+
+        file_path = UPLOAD_DIR / demo_filename
+
+        shutil.copyfile(
+            source_path,
+            file_path
+        )
+
+        logging.info(
+            f"Demo dataset copied to {file_path}"
+        )
+
+        # -----------------------------
+        # Analyze + ingest
+        # -----------------------------
+
+        report = _profile_and_ingest(file_path)
+
+        return report
+
+    except HTTPException:
+
+        raise
+
+    except Exception:
+
+        logging.exception(
+            "Demo dataset loading failed."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to load demo dataset."
+
+        )
+
 
 # ----------------------------------------------------
 # Dataset Cleaning
@@ -368,62 +512,62 @@ async def clean_dataset(
         )
 
         cleaned_dataframe, report = cleaner.clean()
-        
+
         # ----------------------------------
         # Save cleaned dataset
         # ----------------------------------
-        
+
         cleaned_path = CLEANED_DIR / Path(
             app.state.current_dataset
         ).name
-        
+
         cleaned_dataframe.to_csv(
             cleaned_path,
             index=False
         )
-        
+
         app.state.current_dataset = cleaned_path
-        
+
         logging.info(
             f"Cleaned dataset saved at {cleaned_path}"
         )
-        
+
         # ----------------------------------
         # Save cleaning report
         # ----------------------------------
-        
+
         cleaning_report_path = REPORT_DIR / (
             f"{cleaned_path.stem}_cleaning.json"
         )
-        
+
         with open(
             cleaning_report_path,
             "w",
             encoding="utf-8"
         ) as file:
-        
+
             json.dump(
                 report,
                 file,
                 indent=4
             )
-        
+
         logging.info(
             f"Cleaning report saved at {cleaning_report_path}"
         )
-        
+
         # ----------------------------------
         # Add cleaning report to RAG
         # ----------------------------------
-        
+
         RAGIngestor().add_report(
-        
+
             json_path=str(cleaning_report_path),
-        
+
             report_type="cleaning"
-        
+
         )
-        
+
         logging.info(
             "Cleaning report added to vector store."
         )
@@ -435,9 +579,9 @@ async def clean_dataset(
             "report": report
 
         }
-        
+
     except HTTPException:
-        
+
         raise
 
     except Exception:
@@ -456,7 +600,7 @@ async def clean_dataset(
 
 
 # ----------------------------------------------------
-# Feature Engineering 
+# Feature Engineering
 # ----------------------------------------------------
 
 class FeatureEngineeringRequest(BaseModel):
@@ -617,7 +761,7 @@ async def feature_engineering(
 
 
 # ----------------------------------------------------
-# Training 
+# Training
 # ----------------------------------------------------
 
 class TrainingRequest(BaseModel):
