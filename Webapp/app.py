@@ -10,7 +10,9 @@ from fastapi import UploadFile
 from fastapi import File
 from fastapi.requests import Request
 from fastapi import HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -21,6 +23,7 @@ from RAG.ingest import RAGIngestor
 from RAG.vectorstore import VectorStoreManager
 from DataCleaning.clean import DataCleaner
 from FeatureEngineering.feature_eng import FeatureEngineer
+from Training.train import ModelTrainer
 
 
 app = FastAPI()
@@ -40,6 +43,9 @@ CLEANED_DIR.mkdir(exist_ok=True)
 
 FEATURE_DIR = Path("feature_engineered_datasets")
 FEATURE_DIR.mkdir(exist_ok=True)
+
+TRAINED_MODEL_DIR = Path("trained_models")
+TRAINED_MODEL_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(
     directory="Webapp/templates"
@@ -116,6 +122,56 @@ async def cleaning(request: Request):
             status_code=500,
 
             detail="Failed to load cleaning page."
+
+        )
+
+# ----------------------------------------------------
+# Model Training Page
+# ----------------------------------------------------
+
+@app.get("/training")
+async def training(request: Request):
+
+    try:
+
+        columns = []
+
+        if app.state.current_dataset is not None:
+
+            df = pd.read_csv(
+                app.state.current_dataset,
+                nrows=0
+            )
+
+            columns = df.columns.tolist()
+
+        return templates.TemplateResponse(
+
+            request=request,
+
+            name="training.html",
+
+            context={
+
+                "request": request,
+
+                "columns": columns
+
+            }
+
+        )
+
+    except Exception:
+
+        logging.exception(
+            "Failed to load training page."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to load training page."
 
         )
 
@@ -397,17 +453,14 @@ async def clean_dataset(
 
 
 # ----------------------------------------------------
-# Feature Engineering Request
+# Feature Engineering 
 # ----------------------------------------------------
 
 class FeatureEngineeringRequest(BaseModel):
 
     target_column: str
-
     categorical_encoding: str = "none"
-
     scaling: str = "none"
-
     correlation_threshold: float = 0.90
 
 @app.post("/feature")
@@ -559,6 +612,195 @@ async def feature_engineering(
 
         )
 
+
+# ----------------------------------------------------
+# Training 
+# ----------------------------------------------------
+
+class TrainingRequest(BaseModel):
+
+    target_column: str
+    problem_type: str
+    selected_models: list[str]
+    test_size: float = 0.2
+    random_state: int = 42
+
+@app.post("/training")
+async def train_models(
+
+    body: TrainingRequest
+
+):
+
+    try:
+
+        logging.info(
+            "Starting model training."
+        )
+
+        if app.state.current_dataset is None:
+
+            raise HTTPException(
+
+                status_code=400,
+
+                detail="Please upload a dataset first."
+
+            )
+
+        trainer = ModelTrainer(
+
+            dataset_path=app.state.current_dataset,
+
+            target_column=body.target_column,
+
+            selected_models=body.selected_models,
+
+            problem_type=body.problem_type,
+
+            test_size=body.test_size,
+
+            random_state=body.random_state
+
+        )
+
+        report = trainer.train()
+
+        # ----------------------------------------
+        # Save Report
+        # ----------------------------------------
+
+        report_path = REPORT_DIR / (
+
+            f"{Path(app.state.current_dataset).stem}_training.json"
+
+        )
+
+        with open(
+
+            report_path,
+
+            "w",
+
+            encoding="utf-8"
+
+        ) as file:
+
+            json.dump(
+
+                report,
+
+                file,
+
+                indent=4
+
+            )
+
+        logging.info(
+            f"Training report saved at {report_path}"
+        )
+
+        # ----------------------------------------
+        # Add Report To RAG
+        # ----------------------------------------
+
+        RAGIngestor().add_report(
+
+            json_path=str(report_path),
+
+            report_type="training"
+
+        )
+
+        logging.info(
+            "Training report added to vector store."
+        )
+
+        return {
+
+            "success": True,
+
+            "message": "Models trained successfully.",
+
+            "report": report
+
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception:
+
+        logging.exception(
+            "Model training failed."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to train models."
+
+        )
+
+
+# ----------------------------------------------------
+# Download Trained Model
+# ----------------------------------------------------
+
+@app.get("/download-model/{model_name}")
+async def download_model(
+
+    model_name: str
+
+):
+
+    try:
+
+        model_path = TRAINED_MODEL_DIR / (
+
+            model_name + ".pkl"
+
+        )
+
+        if not model_path.exists():
+
+            raise HTTPException(
+
+                status_code=404,
+
+                detail="Model not found."
+
+            )
+
+        return FileResponse(
+
+            path=model_path,
+
+            filename=model_path.name,
+
+            media_type="application/octet-stream"
+
+        )
+
+    except HTTPException:
+
+        raise
+
+    except Exception:
+
+        logging.exception(
+            "Failed to download model."
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Failed to download model."
+
+        )
 
 # ----------------------------------------------------
 # AI Assistant
